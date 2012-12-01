@@ -1,0 +1,3 @@
+include *.rst
+recursive-include ticketing/templates *.txt *.html
+recursive-include ticketing/static *
