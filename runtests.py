@@ -57,7 +57,7 @@ def configure():
                 'django.contrib.admin',
                 'django.contrib.gis',
             ] + OSCAR_CORE_APPS + [
-                'stores',
+                'ticketing',
             ],
             AUTHENTICATION_BACKENDS=(
                 'oscar.apps.customer.auth_backends.Emailbackend',
