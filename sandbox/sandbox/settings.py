@@ -167,7 +167,10 @@ OSCAR_ALLOW_ANON_CHECKOUT = True
 OSCAR_SHOP_NAME = "Ticketing"
 OSCAR_SHOP_TAGLINE = "Make your customers happy!"
 
-GEOIP_PATH = os.path.join(os.path.dirname(__file__), '../geoip')
+
+##### TICKETING SETTINGS #####
+TICKETING_DEFAULT_STATUS = 'New'
+
 
 # Haystack settings
 HAYSTACK_CONNECTIONS = {

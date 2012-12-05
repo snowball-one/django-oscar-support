@@ -1,0 +1,95 @@
+{% extends 'dashboard/layout.html' %}
+{% load currency_filters %}
+{% load ticket_tags %}
+{% load i18n %}
+
+{% block body_class %}support home{% endblock %}
+
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="table-header">
+    <i class="icon-comments-alt icon-large"></i>{% trans "Create a new ticket" %}
+</div>
+
+<div class="well">
+    <a href="{% url ticketing-dashboard:ticket-create %}" class="btn btn-primary btn-large">
+        <i class="icon-plus"></i> {% trans "Create new ticket" %}
+    </a>
+</div>
+
+<div class="table-header">
+    <i class="icon-comments icon-large"></i>{% trans "Your tickets" %}
+</div>
+
+<div class="content-block">
+    <div class='row-fluid'>
+        <aside class="span3">
+            {% for ticket in ticket_list %}
+                <a href="{% url ticketing-dashboard:ticket-update ticket.id %}" style="text-decoration: none;">
+                <div class="well {% if ticket.id == selected_ticket.id %}well-success{% endif %}">
+                    <div class="subheader">
+                        <h4>
+                            {% blocktrans with number=ticket.printable_number subject=ticket.subject|truncatechars:30 %}
+                            Ticket #{{ number }}: <strong>{{ subject }}</strong>
+                            {% endblocktrans %}
+                            <div class="pull-right">
+                                <span class="label">{{ ticket.status.name }}</span>
+                                <span class="label">{{ ticket.type.name }}</span>
+                            </div>
+                        </h4>
+                    </div>
+                    <div>{% trans "Last modified:" %}{{ ticket.date_updated|date:"jS M Y" }}</div>
+                </div>
+                </a>
+            {% endfor %}
+        </aside>
+
+        <div class="span9">
+            {% if selected_ticket %}
+                <div class="subheader">
+                    <h4>
+                        {% blocktrans with number=selected_ticket.printable_number subject=selected_ticket.subject|truncatechars:30 %}
+                        Ticket #{{ number }}: <strong>{{ subject }}</strong>
+                        {% endblocktrans %}
+                        <div class="pull-right">
+                            <span class="label">{{ selected_ticket.status.name }}</span>
+                            <span class="label">{{ selected_ticket.type.name }}</span>
+                        </div>
+                    </h4>
+                </div>
+
+                {% get_messages selected_ticket as selected_ticket_messages %}
+                {% for msg in selected_ticket_messages %}
+                <div class="row-fluid">
+                    <div class="span2">
+                        {{ msg.user.get_fullname|default:msg.user.email }}<br/>
+                        {{ msg.date_created|date:"jS M Y" }}
+                    </div>
+                    <div class="span9 well {% if msg.is_internal %}well-danger{% endif %}">
+                        {{ msg.text|safe }}
+                    </div>
+                </div>
+                <hr />
+                {% endfor %}
+
+                <div class="row-fluid">
+                    <div class="span2">
+                        {{ selected_ticket.requester.get_fullname|default:selected_ticket.requester.email }}<br/>
+                        {{ selected_ticket.date_created|date:"jS M Y" }}
+                    </div>
+                    <div class="span9 well">
+                        {{ selected_ticket.body|safe }}
+                    </div>
+                </div>
+
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

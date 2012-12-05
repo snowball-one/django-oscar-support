@@ -19,6 +19,7 @@ setup(
         'Django>=1.4.2',
         'versiontools>=1.1.9',
         #'django-oscar>=0.5',
+        'django-model-utils>=1.1.0',
     ],
     # See http://pypi.python.org/pypi?%3Aaction=list_classifiers
     dependency_links = [

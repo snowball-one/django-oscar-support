@@ -1,0 +1,67 @@
+{% extends 'dashboard/layout.html' %}
+{% load form_tags %}
+{% load i18n %}
+
+{% block body_class %}support new-ticket{% endblock %}
+
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block header %}
+    <h1>{% trans "New ticket" %}</h1>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class='table-header'>
+    <h2><i class="icon-comments"></i>{% trans "New ticket" %}</h2>
+</div>
+
+<div class="page-content">
+    <form method="post" action="." class="well">
+        <div class='row-fluid'>
+            {% csrf_token %}
+            <div class="span3">
+                {% for field in form %}
+                    {% if not field.name == 'body' and not field.name == 'subject' %}
+                        {% include "oscar/partials/form_field.html" %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="span8">
+                {% for field in form %}
+                    {% if field.name == 'body' or field.name == 'subject' %}
+                        {% include "oscar/partials/form_field.html" %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class='row-fluid'>
+            <div class="form-actions">
+                <div class="btn-group dropup">
+                    <button class="btn btn-primary btn-large">
+                        {% blocktrans with status=default_status %}
+                            Save as {{ status }}
+                        {% endblocktrans %}
+                    </button>
+                    <button class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            {% blocktrans with status=default_status %}
+                                Save as {{ status }}
+                            {% endblocktrans %}
+                        </li>
+                    </ul>
+                </div>
+                {% trans "or" %} <a href="{% url ticketing-dashboard:ticket-list %}">{% trans "cancel" %}</a>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+{% endblock %}
