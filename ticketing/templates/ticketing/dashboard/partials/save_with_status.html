@@ -1,0 +1,27 @@
+{% load i18n %}
+{% load ticket_tags %}
+
+<div id="status-save-button" class="btn-group dropup">
+    <button class="btn btn-primary btn-large">
+        {% get_default_ticket_status as default_status %}
+        {% blocktrans with status=ticket.status.name|default:default_status %}
+            Save as {{ status }}
+        {% endblocktrans %}
+    </button>
+    <button class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown">
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+        {% get_ticket_statuses as statuses %}
+        {% for ticket_status in statuses %}
+        <li data-status-id="{{ ticket_status.id }}">
+            <a href=".">
+                <i class="icon-{{ ticket_status.name|lower }}"></i>
+                {% blocktrans with status=ticket_status %}
+                    Save as <strong>{{ status }}</strong>
+                {% endblocktrans %}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>

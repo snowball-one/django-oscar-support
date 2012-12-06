@@ -1,7 +1,19 @@
 {% extends 'dashboard/layout.html' %}
 {% load currency_filters %}
+{% load staticfiles %}
 {% load ticket_tags %}
 {% load i18n %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {# FIXME: this needs to be modified properly #}
+    <style>
+        textarea {
+            width: 100%;
+            height: auto !important;
+        }
+    </style>
+{% endblock %}
 
 {% block body_class %}support home{% endblock %}
 
@@ -27,6 +39,8 @@
 </div>
 
 <div class="content-block">
+<form id="ticket-update-form" method="post" action="." class="form-inline">
+    {% csrf_token %}
     <div class='row-fluid'>
         <aside class="span3">
             {% for ticket in ticket_list %}
@@ -63,6 +77,28 @@
                     </h4>
                 </div>
 
+                {% for field in form.get_property_fields %}
+                    {% include "ticketing/partials/form_field_inline.html" %}
+                {% endfor %}
+
+                <hr/>
+                {% for field in form.get_message_fields %}
+                    {% if field.is_hidden %}
+                        {{ field }}
+                    {% else %}
+                        <div class="control-group {% if field.errors %}error{% endif %}">
+                            {{ field }}
+                            {% for error in field.errors %}
+                                <ul class="help-block">
+                                    <li>{{ error }}</li>
+                                </ul>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <hr/>
+
                 {% get_messages selected_ticket as selected_ticket_messages %}
                 {% for msg in selected_ticket_messages %}
                 <div class="row-fluid">
@@ -87,9 +123,26 @@
                     </div>
                 </div>
 
+                <div class='row-fluid'>
+                    <div class="form-actions">
+                        {% include "ticketing/dashboard/partials/save_with_status.html" with ticket=selected_ticket %}
+                        {% trans "or" %} <a href="{% url ticketing-dashboard:ticket-list %}">{% trans "cancel" %}</a>
+                    </div>
+                </div>
             {% endif %}
         </div>
-    </div>
-</div>
 
+    </div>
+</form>
+</div>
+{% endblock %}
+
+{% block extrascripts %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static "ticketing/js/dashboard.js" %}"></script>
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    ticketing.dashboard.init();
 {% endblock %}

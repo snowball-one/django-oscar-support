@@ -1,0 +1,14 @@
+{% if field.is_hidden %}
+    {{ field }}
+{% else %}
+    <span class="control-group {% if field.errors %}error{% endif %}">
+        <span class="help-block">{{ form.non_field_errors }}</span>
+        {{ field.label_tag }}
+        {{ field }}
+        {% for error in field.errors %}
+            <ul class="help-block">
+                <li>{{ error }}</li>
+            </ul>
+        {% endfor %}
+    </span>
+{% endif %}

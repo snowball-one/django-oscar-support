@@ -45,12 +45,11 @@ class Ticket(models.Model):
     type = models.ForeignKey('ticketing.TicketType', verbose_name=_("Type"),
                              related_name="tickets", db_index=True)
 
+    assigned_group = models.ForeignKey('auth.Group', null=True, blank=True,
+                                       verbose_name=_("Assigned group"),
+                                       related_name="tickets")
     assignee = models.ForeignKey('auth.User', verbose_name=_("Assignee"),
                                  null=True, blank=True, related_name="tickets")
-    assigned_group = models.ForeignKey('auth.Group',
-                                       verbose_name=_("Assigned group"),
-                                       related_name="tickets", null=True,
-                                       blank=True)
 
     #FIXME: add tagging capabilities
 
@@ -84,9 +83,9 @@ class BaseMessage(models.Model):
     is_internal = False
 
     user = models.ForeignKey('auth.User', verbose_name=_("User"),
-                             related_name="ticket_messages")
+                             related_name="messages")
     ticket = models.ForeignKey('ticketing.Ticket', verbose_name=_("Ticket"),
-                               related_name="ticket_messages")
+                               related_name="messages")
 
     text = models.TextField(_("Text"))
     date_created = models.DateTimeField(auto_now_add=True)

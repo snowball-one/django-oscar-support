@@ -8,7 +8,9 @@ from django.utils.translation import ugettext as _
 from ticketing.dashboard import forms
 from ticketing.utils import TicketNumberGenerator
 
+Note = get_model('ticketing', 'Note')
 Ticket = get_model('ticketing', 'Ticket')
+Message = get_model('ticketing', 'Message')
 TicketStatus = get_model('ticketing', 'TicketStatus')
 
 
@@ -86,14 +88,31 @@ class TicketCreateView(generic.CreateView):
 
 class TicketUpdateView(TicketListMixin, generic.UpdateView):
     model = Ticket
+    default_message_model = Message
     context_object_name = 'selected_ticket'
-    #form_class = TicketUpdateForm
+    form_class = forms.TicketUpdateForm
     template_name = 'ticketing/dashboard/ticket_detail.html'
 
     def get_context_data(self, **kwargs):
         ctx = super(TicketUpdateView, self).get_context_data(**kwargs)
         ctx['ticket_list'] = self.get_ticket_list()
         return ctx
+
+    def form_valid(self, form):
+        ticket = form.save()
+
+        message_type = form.cleaned_data.get('message_type', None)
+        message_text = form.cleaned_data.get('message_text', None)
+
+        if message_type and message_text:
+            message_model = self.default_message_model
+            if message_type == 'note':
+                message_model = Note
+
+            message_model.objects.create(user=self.request.user,
+                                         text=message_text, ticket=ticket)
+
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse("ticketing-dashboard:ticket-list")

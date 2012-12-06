@@ -122,3 +122,38 @@ class TestATicket(WebTestCase):
         self.assertContains(page, note.text)
         self.assertContains(page, msg.text)
         self.assertContains(page, reply.text)
+
+    def test_can_be_updated_with_an_internal_note(self):
+        message_text = "I am adding an internal message"
+        page = self.get(reverse('ticketing-dashboard:ticket-update',
+                                args=(self.ticket.id,)))
+
+        update_form = page.forms['ticket-update-form']
+        update_form['message_text'] = message_text
+        update_form['message_type'] = "note"
+        page = update_form.submit()
+
+        self.assertRedirects(page, reverse('ticketing-dashboard:ticket-list'))
+        self.assertEquals(self.ticket.messages.count(), 1)
+
+        message = self.ticket.messages.select_subclasses()[0]
+        self.assertEquals(message.__class__, Note)
+        self.assertEquals(message.text, message_text)
+        self.assertEquals(message.user, self.user)
+
+    def test_can_be_updated_with_a_public_response(self):
+        message_text = "I am adding a public message or reply"
+        page = self.get(reverse('ticketing-dashboard:ticket-update',
+                                args=(self.ticket.id,)))
+
+        update_form = page.forms['ticket-update-form']
+        update_form['message_text'] = message_text
+        page = update_form.submit()
+
+        self.assertRedirects(page, reverse('ticketing-dashboard:ticket-list'))
+        self.assertEquals(self.ticket.messages.count(), 1)
+
+        message = self.ticket.messages.select_subclasses()[0]
+        self.assertEquals(message.__class__, Message)
+        self.assertEquals(message.text, message_text)
+        self.assertEquals(message.user, self.user)

@@ -40,27 +40,11 @@
 
         <div class='row-fluid'>
             <div class="form-actions">
-                <div class="btn-group dropup">
-                    <button class="btn btn-primary btn-large">
-                        {% blocktrans with status=default_status %}
-                            Save as {{ status }}
-                        {% endblocktrans %}
-                    </button>
-                    <button class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown">
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            {% blocktrans with status=default_status %}
-                                Save as {{ status }}
-                            {% endblocktrans %}
-                        </li>
-                    </ul>
-                </div>
+                {% include "ticketing/dashboard/partials/save_with_status.html" %}
                 {% trans "or" %} <a href="{% url ticketing-dashboard:ticket-list %}">{% trans "cancel" %}</a>
             </div>
-
         </div>
+
     </form>
 </div>
 
