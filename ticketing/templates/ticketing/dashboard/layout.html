@@ -1,0 +1,13 @@
+{% extends "dashboard/layout.html" %}
+{% load staticfiles %}
+
+{% block extrascripts %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static "ticketing/js/dashboard.js" %}"></script>
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    ticketing.dashboard.init();
+{% endblock %}
+

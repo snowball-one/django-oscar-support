@@ -1,6 +1,5 @@
-{% extends 'dashboard/layout.html' %}
+{% extends 'ticketing/dashboard/layout.html' %}
 {% load currency_filters %}
-{% load staticfiles %}
 {% load ticket_tags %}
 {% load i18n %}
 
@@ -135,14 +134,4 @@
     </div>
 </form>
 </div>
-{% endblock %}
-
-{% block extrascripts %}
-    {{ block.super }}
-    <script type="text/javascript" src="{% static "ticketing/js/dashboard.js" %}"></script>
-{% endblock %}
-
-{% block onbodyload %}
-    {{ block.super }}
-    ticketing.dashboard.init();
 {% endblock %}
