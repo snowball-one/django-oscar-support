@@ -1,0 +1,49 @@
+{% load i18n %}
+{% load thumbnail %}
+{% load currency_filters %}
+
+{% trans "Related products:" %}
+<ul class="nav nav-pills">
+{% for rel_product in ticket.relatedproducts.all %}
+    {% with product=rel_product.product %}
+        <li>
+            <a class="nav nav-pills" data-toggle="collapse" data-target="#product-{{ product.id }}">
+                {% thumbnail product.primary_image.original "50x50" as img %}
+                    <img src="{{ img.url }}" />
+                {% endthumbnail %}
+                {{ product.title|truncatechars:30 }}
+            </a>
+        </li>
+    {% endwith %}
+{% endfor %}
+</ul>
+
+{% for rel_product in ticket.relatedproducts.all %}
+    {% with product=rel_product.product %}
+        <div id="product-{{ product.id }}" class="collapse">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th>{% trans "UPC" %}</th>
+                    <th>{% trans "Title" %}</th>
+                    <th>{% trans "Product class" %}</th>
+                    <th>{% trans "Partner" %}</th>
+                    <th>{% trans "Partner SKU" %}</th>
+                    <th>{% trans "Price exc tax" %}</th>
+                    <th>{% trans "Number in stock" %}</th>
+                    <th>{% trans "Number allocated" %}</th>
+                </tr>
+                <tr>
+                    <td>{{ product.upc }}</td>
+                    <td>{{ product.title }}</td>
+                    <td>{{ product.product_class.name }}</td>
+                    <td>{{ product.stockrecord.partner.name|default:"-" }}</td>
+
+                    <td>{{ product.stockrecord.partner_sku|default:"-" }}</td>
+                    <td>{{ product.stockrecord.price_excl_tax|currency|default:"-" }}</td>
+                    <td>{{ product.stockrecord.num_in_stock|default:"-" }}</td>
+                    <td>{{ product.stockrecord.num_allocated|default:"0" }}</td>
+                </tr>
+            </table>
+        </div>
+    {% endwith %}
+{% endfor %}

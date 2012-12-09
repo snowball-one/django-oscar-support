@@ -38,7 +38,7 @@
 </div>
 
 <div class="content-block">
-<form id="ticket-update-form" method="post" action="." class="form-inline">
+<form id="ticket-update-form" data-ticket-id="{{ selected_ticket.id }}" method="post" action="." class="form-inline wysiwyg">
     {% csrf_token %}
     <div class='row-fluid'>
         <aside class="span3">
@@ -56,7 +56,7 @@
                             </div>
                         </h4>
                     </div>
-                    <div>{% trans "Last modified:" %}{{ ticket.date_updated|date:"jS M Y" }}</div>
+                    <div>{% trans "Last modified:" %}{{ ticket.date_updated|date:"jS M Y H:i" }}</div>
                 </div>
                 </a>
             {% endfor %}
@@ -64,23 +64,56 @@
 
         <div class="span9">
             {% if selected_ticket %}
-                <div class="subheader">
+                <div class="well">
                     <h4>
-                        {% blocktrans with number=selected_ticket.printable_number subject=selected_ticket.subject|truncatechars:30 %}
-                        Ticket #{{ number }}: <strong>{{ subject }}</strong>
-                        {% endblocktrans %}
+                        <strong>{% trans "Ticket #" %}{{ selected_ticket.printable_number }}:</strong>
+                        {{ selected_ticket.subject|truncatechars:30 }}
                         <div class="pull-right">
                             <span class="label">{{ selected_ticket.status.name }}</span>
                             <span class="label">{{ selected_ticket.type.name }}</span>
                         </div>
                     </h4>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td rowspan="2"></td>
+                            {% with requester=selected_ticket.requester %}
+                                <td>
+                                    <strong>{% trans "From:" %}</strong>
+                                    {{ requester.get_full_name|default:requester.email }}
+                                </td>
+                            {% endwith %}
+                            <td>
+                                <strong>{% trans "Last updated:" %}</strong>
+                                {{ selected_ticket.date_updated|date:"jS M Y H:i" }}i
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                {% for field in form.get_property_fields %}
+                                    {% include "ticketing/partials/form_field_inline.html" %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    </table>
                 </div>
 
-                {% for field in form.get_property_fields %}
-                    {% include "ticketing/partials/form_field_inline.html" %}
-                {% endfor %}
+                {% if selected_ticket.relatedorders.all|length %}
+                    <hr/>
+                    {% include "ticketing/dashboard/partials/related_orders.html" with ticket=selected_ticket %}
+                {% endif %}
+
+                {% if selected_ticket.relatedlines.all|length %}
+                    <hr/>
+                    {% include "ticketing/dashboard/partials/related_lines.html" with ticket=selected_ticket %}
+                {% endif %}
+
+                {% if selected_ticket.relatedproducts.all|length %}
+                    <hr/>
+                    {% include "ticketing/dashboard/partials/related_products.html" with ticket=selected_ticket %}
+                {% endif %}
 
                 <hr/>
+
                 {% for field in form.get_message_fields %}
                     {% if field.is_hidden %}
                         {{ field }}
@@ -103,7 +136,7 @@
                 <div class="row-fluid">
                     <div class="span2">
                         {{ msg.user.get_fullname|default:msg.user.email }}<br/>
-                        {{ msg.date_created|date:"jS M Y" }}
+                        {{ msg.date_created|date:"jS M Y H:i" }}
                     </div>
                     <div class="span9 well {% if msg.is_internal %}well-danger{% endif %}">
                         {{ msg.text|safe }}
@@ -115,7 +148,7 @@
                 <div class="row-fluid">
                     <div class="span2">
                         {{ selected_ticket.requester.get_fullname|default:selected_ticket.requester.email }}<br/>
-                        {{ selected_ticket.date_created|date:"jS M Y" }}
+                        {{ selected_ticket.date_created|date:"jS M Y H:i" }}
                     </div>
                     <div class="span9 well">
                         {{ selected_ticket.body|safe }}

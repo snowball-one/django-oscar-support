@@ -66,7 +66,9 @@ class Ticket(models.Model):
 
     @property
     def printable_number(self):
-        return "%s-%s" % (self.number, self.subticket_number)
+        if self.subticket_number:
+            return "%s-%s" % (self.number, self.subticket_number)
+        return self.number
 
     def __unicode__(self):
         return "Ticket #%s-%s" % (self.number, self.subticket_number)
@@ -117,7 +119,7 @@ class Note(BaseMessage):
 
 class AbstractRelatedItem(models.Model):
     ticket = models.ForeignKey('ticketing.Ticket', verbose_name=_("Ticket"),
-                               related_name="related_%(class)ss")
+                               related_name="%(class)ss")
 
     class Meta:
         abstract = True
@@ -142,7 +144,7 @@ class RelatedLine(AbstractRelatedItem):
 
 
 class RelatedProduct(AbstractRelatedItem):
-    order = models.ForeignKey('catalogue.Product', verbose_name=_("Product"))
+    product = models.ForeignKey('catalogue.Product', verbose_name=_("Product"))
 
     class Meta:
         verbose_name = _("Related product")

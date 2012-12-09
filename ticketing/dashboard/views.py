@@ -5,6 +5,8 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 
+from extra_views import CreateWithInlinesView, InlineFormSet
+
 from ticketing.dashboard import forms
 from ticketing.utils import TicketNumberGenerator
 
@@ -26,7 +28,7 @@ class TicketListMixin(object):
 
         self.ticket_list = queryset.filter(
             # A user can see tickets that are assigned to them
-            # or on of the groups they belong to
+            # or one of the groups they belong to
             Q(assignee=self.request.user) |
             Q(assigned_group__in=self.request.user.groups.all()) |
             # they can also see tickets that have no assigned
@@ -45,20 +47,46 @@ class TicketListView(TicketListMixin, generic.ListView):
         return self.get_ticket_list()
 
 
-class TicketCreateView(generic.CreateView):
+class RelatedProductInline(InlineFormSet):
+    model = get_model('ticketing', 'RelatedProduct')
+    extra = 1
+    max_num = 1
+
+
+class RelatedOrderInline(InlineFormSet):
+    model = get_model('ticketing', 'RelatedOrder')
+    extra = 1
+    max_num = 1
+
+
+class RelatedLineInline(InlineFormSet):
+    model = get_model('ticketing', 'RelatedLine')
+    extra = 1
+
+
+class RelatedFileInline(InlineFormSet):
+    model = get_model('ticketing', 'RelatedFile')
+    extra = 3
+
+
+class TicketCreateView(CreateWithInlinesView):
     model = Ticket
     template_name = 'ticketing/dashboard/ticket_create.html'
     default_status = None
     form_class = forms.TicketCreateForm
+    inlines = [RelatedProductInline, RelatedOrderInline,
+               RelatedLineInline, RelatedFileInline]
 
-    def form_valid(self, form):
+    def forms_valid(self, form, inlines):
         ticket_numbers = TicketNumberGenerator.generate_ticket_number()
 
-        ticket = form.save(commit=False)
-        ticket.number = ticket_numbers['number']
-        ticket.subticket_number = ticket_numbers['subticket_number']
-        ticket.save()
+        self.object = form.save(commit=False)
+        self.object.number = ticket_numbers['number']
+        self.object.subticket_number = ticket_numbers['subticket_number']
+        self.object.save()
 
+        for formset in inlines:
+            formset.save()
         return HttpResponseRedirect(self.get_success_url())
 
     def get_default_status(self):

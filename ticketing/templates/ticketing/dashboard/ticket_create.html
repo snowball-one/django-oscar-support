@@ -13,14 +13,14 @@
 
 {% block dashboard_content %}
 
-<div class='table-header'>
-    <h2><i class="icon-comments"></i>{% trans "New ticket" %}</h2>
-</div>
+<form id="ticket-create-form" method="post" action=".">
+    {% csrf_token %}
+    <div class='table-header'>
+        <h2><i class="icon-comments"></i>{% trans "New ticket" %}</h2>
+    </div>
 
-<div class="page-content">
-    <form method="post" action="." class="well">
+    <div class="page-content well">
         <div class='row-fluid'>
-            {% csrf_token %}
             <div class="span3">
                 {% for field in form %}
                     {% if not field.name == 'body' and not field.name == 'subject' %}
@@ -37,15 +37,55 @@
                 {% endfor %}
             </div>
         </div>
+    </div>
 
+    <div class="table-header">
+        <h2>{% trans "Related to a product" %}</h2>
+    </div>
+
+    <div class="page-content well">
+        <div class='row-fluid'>
+            {% include "ticketing/dashboard/partials/inline_form.html" with formset=inlines.0 %}
+        </div>
+    </div>
+
+    <div class="table-header">
+        <h2>{% trans "Related to an order" %}</h2>
+    </div>
+
+    <div class="page-content well">
+        <div class='row-fluid'>
+            {% include "ticketing/dashboard/partials/inline_form.html" with formset=inlines.1 %}
+        </div>
+    </div>
+
+    <div class="table-header">
+        <h2>{% trans "Related to lines" %}</h2>
+    </div>
+
+    <div class="page-content well">
+        <div class='row-fluid'>
+            {% include "ticketing/dashboard/partials/inline_form.html" with formset=inlines.2 %}
+        </div>
+    </div>
+
+    <div class="table-header">
+        <h2>{% trans "Related to files" %}</h2>
+    </div>
+
+    <div class="page-content well">
+        <div class='row-fluid'>
+            {% include "ticketing/dashboard/partials/inline_form.html" with formset=inlines.3 %}
+        </div>
+    </div>
+
+    <div class="content well">
         <div class='row-fluid'>
             <div class="form-actions">
                 {% include "ticketing/dashboard/partials/save_with_status.html" %}
                 {% trans "or" %} <a href="{% url ticketing-dashboard:ticket-list %}">{% trans "cancel" %}</a>
             </div>
         </div>
-
-    </form>
-</div>
-
+    </div>
+</form>
 {% endblock %}

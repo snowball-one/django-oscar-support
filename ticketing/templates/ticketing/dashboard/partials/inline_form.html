@@ -1,0 +1,10 @@
+<div class='row-fluid'>
+    {{ formset.management_form }}
+
+    {% for form in formset %}
+        <div class="form-inline">
+            {% include "partials/form_fields_inline.html" %}
+        </div>
+    {% endfor %}
+</div>
+

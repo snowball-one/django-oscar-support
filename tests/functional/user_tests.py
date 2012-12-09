@@ -1,4 +1,4 @@
-from oscar_testsupport import WebTestCase
+from oscar_testsupport.testcases import WebTestCase
 
 
 class TestARegisteredUser(WebTestCase):

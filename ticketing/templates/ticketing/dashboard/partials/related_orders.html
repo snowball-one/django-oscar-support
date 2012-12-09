@@ -1,0 +1,39 @@
+{% load i18n %}
+{% load currency_filters %}
+
+{% trans "Related orders:" %}
+<ul class="nav nav-pills">
+{% for rel_order in ticket.relatedorders.all %}
+    {% with order=rel_order.order %}
+        <li>
+            <a class="nav nav-pills" data-toggle="collapse" data-target="#order-{{ order.number }}">
+                {% trans "#" %}{{ order.number }}
+            </a>
+        </li>
+    {% endwith %}
+{% endfor %}
+</ul>
+{% for rel_order in ticket.relatedorders.all %}
+    {% with order=rel_order.order %}
+        <div id="order-{{ order.number }}" class="collapse">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th>{% trans "Order number" %}</th>
+                    <th>{% trans "Customer" %}</th>
+                    <th>{% trans "Items" %}</th>
+                    <th>{% trans "Total inc tax" %}</th>
+                    <th>{% trans "Date purchased" %}</th>
+                </tr>
+                <tr>
+                    <td>{{ order.number }}</td>
+                    <td>{{ order.user.get_full_name }}<br/>
+                        {{ order.email }}
+                    </td>
+                    <td>{{ order.lines.count }}</td>
+                    <td>{{ order.total_incl_tax|currency }}</td>
+                    <td>{{ order.date_placed|date:"jS M Y H:i" }}</td>
+                </tr>
+            </table>
+        </div>
+    {% endwith %}
+{% endfor %}

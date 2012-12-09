@@ -1,0 +1,47 @@
+{% load i18n %}
+{% load currency_filters %}
+
+{% trans "Related lines:" %}
+<ul class="nav nav-pills">
+{% for rel_line in ticket.relatedlines.all %}
+    {% with line=rel_line.line %}
+        <li>
+            <a class="nav nav-pills" data-toggle="collapse" data-target="#line-{{ line.id }}">
+                {% blocktrans with order_number=line.order.number line_id=line.id %}
+                    Line #{{ line_id }} in order #{{ order_number }}
+                {% endblocktrans %}
+            </a>
+        </li>
+    {% endwith %}
+{% endfor %}
+</ul>
+
+{% for rel_line in ticket.relatedlines.all %}
+    {% with line=rel_line.line %}
+        <div id="line-{{ line.id }}" class="collapse">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th>{% trans "Order number" %}</th>
+                    <th>{% trans "Quantity" %}</th>
+                    <th>{% trans "Product" %}</th>
+                    <th>{% trans "UPC" %}</th>
+                    <th>{% trans "Supplier" %}</th>
+                    <th>{% trans "Supplier SKU" %}</th>
+                    <th>{% trans "Price before discounts" %}</th>
+                    <th>{% trans "Date purchased" %}</th>
+                </tr>
+                <tr>
+                    <td>{{ line.order.number }}</td>
+                    <td>{{ line.quantity }}</td>
+                    <td>{{ line.title }}</td>
+                    <td>{{ line.upc }}</td>
+
+                    <td>{{ line.partner_name }}</td>
+                    <td>{{ line.partner_sku }}</td>
+                    <td>{{ line.line_price_incl_tax|currency }}</td>
+                    <td>{{ line.order.date_placed|date:"jS M Y H:i" }}</td>
+                </tr>
+            </table>
+        </div>
+    {% endwith %}
+{% endfor %}

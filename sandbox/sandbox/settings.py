@@ -130,6 +130,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
+    'django.contrib.flatpages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.gis',
@@ -166,6 +167,8 @@ OSCAR_ALLOW_ANON_CHECKOUT = True
 
 OSCAR_SHOP_NAME = "Ticketing"
 OSCAR_SHOP_TAGLINE = "Make your customers happy!"
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 ##### TICKETING SETTINGS #####

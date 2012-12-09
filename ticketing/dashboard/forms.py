@@ -2,6 +2,8 @@ from django import forms
 from django.db.models import get_model
 from django.utils.translation import ugettext_lazy as _
 
+CommunicationEventType = get_model('customer', 'CommunicationEventType')
+
 
 class TicketCreateForm(forms.ModelForm):
 
@@ -25,6 +27,17 @@ class TicketUpdateForm(forms.ModelForm):
                                      initial='message', required=False)
     message_text = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}),
                                    label=_("Message text"), required=False)
+
+    message_template = forms.ChoiceField(label=_("Template"), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(TicketUpdateForm, self).__init__(*args, **kwargs)
+
+        template_choices = [('', _("Please select a template"))]
+        for event_type in CommunicationEventType.objects.all():
+            template_choices.append((event_type.id, event_type.name,))
+
+        self.fields['message_template'].choices = template_choices
 
     def get_property_fields(self):
         for field in self:

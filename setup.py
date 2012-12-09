@@ -20,6 +20,8 @@ setup(
         'versiontools>=1.1.9',
         #'django-oscar>=0.5',
         'django-model-utils>=1.1.0',
+        'django-extra-views>=0.5.2',
+        'django-tastypie>=0.9.11',
     ],
     # See http://pypi.python.org/pypi?%3Aaction=list_classifiers
     dependency_links = [
