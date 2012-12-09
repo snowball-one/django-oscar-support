@@ -1,23 +1,31 @@
 from django.http import Http404
+from django.db import IntegrityError
 from django.db.models import get_model, Q
-from tastypie.utils import trailing_slash
 from django.conf.urls.defaults import url
 from django.contrib.sites.models import Site
 from django.template import Template, RequestContext
+from django.utils.translation import ugettext_lazy as _
 from django.core.paginator import Paginator, InvalidPage
 
 from tastypie import fields
 from tastypie.api import Api
-from tastypie.constants import ALL, ALL_WITH_RELATIONS
+from tastypie.utils import trailing_slash
+from tastypie.exceptions import BadRequest
 from tastypie.resources import ModelResource
-from tastypie.authorization import ReadOnlyAuthorization
+from tastypie.validation import FormValidation
+from tastypie.authorization import (ReadOnlyAuthorization,
+                                    DjangoAuthorization)
 
+from oscar.apps.customer.forms import generate_username
+
+from ticketing.dashboard.forms import RequesterCreateForm
 from ticketing.api.authentication import SessionAuthentication
 
-v1_api = Api(api_name='v1')
-
-
+User = get_model('auth', 'User')
 Ticket = get_model('ticketing', 'Ticket')
+
+
+v1_api = Api(api_name='v1')
 
 
 class SearchableModelResource(ModelResource):
@@ -107,11 +115,13 @@ class CommunicationEventTypeResource(ModelResource):
 
 class UserResource(SearchableModelResource):
     class Meta:
-        queryset = get_model('auth', 'User').objects.all()
+        queryset = User.objects.all()
         resource_name = 'user'
-        authorization = ReadOnlyAuthorization()
+        authorization = DjangoAuthorization()
         authentication = SessionAuthentication()
+        always_return_data = True
         fields = ['username', 'email', 'first_name', 'last_name', 'id']
+        validation = FormValidation(form_class=RequesterCreateForm)
 
     def override_urls(self):
         return [
@@ -154,6 +164,32 @@ class UserResource(SearchableModelResource):
             Q(first_name__icontains=fn_search) |
             Q(last_name__icontains=ln_search)
         )
+
+    def obj_create(self, bundle, request=None, **kwargs):
+        try:
+            User.objects.get(email=bundle.data['email'])
+        except User.DoesNotExist:
+            pass
+        except User.MultipleObjectsReturned:
+            raise BadRequest(
+                _('A user with this email address already exists')
+            )
+        else:
+            raise BadRequest(
+                _('A user with this email address already exists')
+            )
+
+        try:
+            bundle.obj = User.objects.create_user(
+                username=generate_username(),
+                email=bundle.data.get('email', None)
+            )
+            bundle.obj.first_name = bundle.data.get('first_name', None)
+            bundle.obj.last_name = bundle.data.get('last_name', None)
+            bundle.obj.save()
+        except IntegrityError:
+            raise BadRequest('That username already exists')
+        return bundle
 
 
 class OrderResource(ModelResource):

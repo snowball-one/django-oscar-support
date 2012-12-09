@@ -33,7 +33,7 @@
                 <span>
                     {% blocktrans %}
                         Enter an existing user or
-                        <a>add a new user</a>.
+                        <a href="#requester-create-form-modal" data-toggle="modal">add a new user</a>.
                     {% endblocktrans %}
                 </span>
 
@@ -99,6 +99,26 @@
         </div>
     </div>
 </form>
+
+<div id="requester-create-form-modal" class="modal hide fade" tabindex="-1"
+     role="dialog" aria-labelledby="requester-create-form-modal-label" aria-hidden="true">
+    <form id="create-user-form" method="post" action="{% url api_dispatch_list "v1" "user" %}">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="requester-create-form-modal-label">{% trans "Create new user" %}</h3>
+        </div>
+
+        <div class="modal-body">
+                {% csrf_token %}
+                {% include "partials/form_fields.html" with form=requester_create_form %}
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">{% trans "Close" %}</button>
+            <button type="submit" class="btn btn-primary">{% trans "Create user" %}</button>
+        </div>
+    </form>
+</div>
 {% endblock %}
 
 {% block onbodyload %}

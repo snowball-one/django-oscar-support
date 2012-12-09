@@ -55,7 +55,7 @@ class TestAStaffMember(WebTestCase):
         question_type = TicketType.objects.get(name="Question")
 
         page = self.get(reverse('ticketing-dashboard:ticket-create'))
-        ticket_form = page.form
+        ticket_form = page.forms['ticket-create-form']
         ticket_form['requester'] = customer.id
         ticket_form['type'] = question_type.id
         ticket_form['subject'] = 'this is my subject'
@@ -76,7 +76,7 @@ class TestAStaffMember(WebTestCase):
         status = TicketStatus.objects.get(name="Open")
 
         page = self.get(reverse('ticketing-dashboard:ticket-create'))
-        ticket_form = page.form
+        ticket_form = page.forms['ticket-create-form']
         ticket_form['requester'] = customer.id
         ticket_form['status'] = status.id
         ticket_form['type'] = question_type.id

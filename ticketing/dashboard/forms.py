@@ -86,3 +86,13 @@ class TicketUpdateForm(forms.ModelForm):
         widgets = {
             'status': forms.HiddenInput(),
         }
+
+
+class RequesterCreateForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=255)
+    last_name = forms.CharField(max_length=255)
+    email = forms.EmailField()
+
+    class Meta:
+        model = get_model('auth', 'User')
+        fields = ['first_name', 'last_name', 'email']

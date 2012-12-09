@@ -108,6 +108,7 @@ class TicketCreateView(CreateWithInlinesView):
         status = self.get_default_status()
         ctx['default_status'] = status
         ctx['status_list'] = TicketStatus.objects.exclude(name=status.name)
+        ctx['requester_create_form'] = forms.RequesterCreateForm()
         return ctx
 
     def get_success_url(self, **kwargs):
