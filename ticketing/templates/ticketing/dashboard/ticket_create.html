@@ -2,6 +2,11 @@
 {% load form_tags %}
 {% load i18n %}
 
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+{% endblock %}
+
 {% block body_class %}support new-ticket{% endblock %}
 
 {% block breadcrumbs %}
@@ -22,18 +27,24 @@
     <div class="page-content well">
         <div class='row-fluid'>
             <div class="span3">
-                {% for field in form %}
-                    {% if not field.name == 'body' and not field.name == 'subject' %}
-                        {% include "oscar/partials/form_field.html" %}
-                    {% endif %}
+                {% for field in form.get_requester_fields %}
+                    {% include "oscar/partials/form_field.html" %}
+                {% endfor %}
+                <span>
+                    {% blocktrans %}
+                        Enter an existing user or
+                        <a>add a new user</a>.
+                    {% endblocktrans %}
+                </span>
+
+                {% for field in form.get_property_fields %}
+                    {% include "oscar/partials/form_field.html" %}
                 {% endfor %}
             </div>
 
             <div class="span8">
-                {% for field in form %}
-                    {% if field.name == 'body' or field.name == 'subject' %}
-                        {% include "oscar/partials/form_field.html" %}
-                    {% endif %}
+                {% for field in form.get_message_fields %}
+                    {% include "oscar/partials/form_field.html" %}
                 {% endfor %}
             </div>
         </div>
@@ -88,4 +99,9 @@
         </div>
     </div>
 </form>
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    ticketing.dashboard.initAutoComplete();
 {% endblock %}

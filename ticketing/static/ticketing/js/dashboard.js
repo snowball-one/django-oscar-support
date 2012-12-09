@@ -29,5 +29,31 @@ ticketing.dashboard = {
                 }
             });
         });
+    },
+    initAutoComplete: function () {
+        console.log('autocomplete intialising');
+        $('.autocomplete-field').each(function (elem) {
+            var searchInput = $('[type=text]', this);
+            var idInput = $('[type=hidden]', this);
+            var sourceUrl = $(this).data('source-url');
+
+            console.log('using source url', sourceUrl);
+
+            searchInput.autocomplete({
+                minLength: 2,
+                source: function (request, response) {
+                    $.getJSON(sourceUrl, {
+                        q: request.term
+                    }, function (data) {
+                        response(data.objects);
+                    });
+                },
+                select: function (event, ui) {
+                    searchInput.val(ui.item.label);
+                    idInput.val(ui.item.value);
+                    return false;
+                }
+            });
+        });
     }
 };

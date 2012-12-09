@@ -45,8 +45,8 @@ class TestAStaffMember(WebTestCase):
         self.assertEquals(len(ticket_list), 1)
         self.assertEquals(ticket_list[0].number, '1')
 
-        self.assertContains(page, self.unassigned_ticket.printable_number)
-        self.assertNotContains(page, self.hidden_ticket.printable_number)
+        self.assertContains(page, "#%d" % self.unassigned_ticket.printable_number)
+        self.assertNotContains(page, "#%d" % self.hidden_ticket.printable_number)
 
     def test_can_create_a_new_ticket_for_an_existing_user(self):
         customer = User.objects.create_user(username="customer_one",

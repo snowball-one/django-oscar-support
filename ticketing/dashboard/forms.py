@@ -2,10 +2,40 @@ from django import forms
 from django.db.models import get_model
 from django.utils.translation import ugettext_lazy as _
 
+from ticketing.forms.fields import AutoCompleteField
+
+User = get_model('auth', 'User')
 CommunicationEventType = get_model('customer', 'CommunicationEventType')
 
 
 class TicketCreateForm(forms.ModelForm):
+    requester = AutoCompleteField(model=User, url='/api/v1/user/search/')
+    assignee = AutoCompleteField(
+        model=User,
+        url='/api/v1/agent/search/',
+        required=False
+    )
+    assigned_group = AutoCompleteField(
+        model=get_model('auth', 'Group'),
+        url='/api/v1/group/search/',
+        required=False
+    )
+
+    def get_requester_fields(self):
+        for field in self:
+            if field.name.startswith('requester'):
+                yield field
+
+    def get_message_fields(self):
+        for field in self:
+            if field.name in ['body', 'subject']:
+                yield field
+
+    def get_property_fields(self):
+        for field in self:
+            if field.name not in ['body', 'subject'] \
+               and not field.name.startswith('requester') :
+                yield field
 
     class Meta:
         model = get_model('ticketing', 'Ticket')
