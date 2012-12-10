@@ -15,11 +15,6 @@ class TicketCreateForm(forms.ModelForm):
         url='/api/v1/agent/search/',
         required=False
     )
-    assigned_group = AutoCompleteField(
-        model=get_model('auth', 'Group'),
-        url='/api/v1/group/search/',
-        required=False
-    )
 
     def get_requester_fields(self):
         for field in self:

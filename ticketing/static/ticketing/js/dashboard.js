@@ -34,7 +34,6 @@ ticketing.dashboard = {
             ev.preventDefault();
             var form = $(this);
             var formUrl = $(this).attr('action');
-            console.log($(this).serializeArray());
             $.ajax({
                 url: formUrl,
                 type: $(this).attr('method'),
@@ -48,7 +47,6 @@ ticketing.dashboard = {
                 dataType: 'json',
                 processData: false,
                 beforeSend: function (jqXHR, settings) {
-                    console.log('beforeSend', $('input[name=csrfmiddlewaretoken]', form));
                     jqXHR.setRequestHeader('X-CSRFToken', $('input[name=csrfmiddlewaretoken]', form).val());
                 },
                 success: function (data) {
@@ -57,7 +55,6 @@ ticketing.dashboard = {
                     $('#id_requester_helper').val(data.label);
                 },
                 error: function (data) {
-                    console.log('error creating new user', data);
                     $("#id_email").parents('.control-group').addClass('error');
 
                     var helpBlock = $('#id_email').siblings('.help-block');
@@ -79,16 +76,13 @@ ticketing.dashboard = {
 
     },
     initAutoComplete: function () {
-        console.log('autocomplete intialising');
         $('.autocomplete-field').each(function (elem) {
             var searchInput = $('[type=text]', this);
             var idInput = $('[type=hidden]', this);
             var sourceUrl = $(this).data('source-url');
 
-            console.log('using source url', sourceUrl);
-
             searchInput.autocomplete({
-                minLength: 2,
+                minLength: 0,
                 source: function (request, response) {
                     $.getJSON(sourceUrl, {
                         q: request.term
@@ -101,6 +95,8 @@ ticketing.dashboard = {
                     idInput.val(ui.item.value);
                     return false;
                 }
+            }).focus(function () {
+                $(this).autocomplete("search");
             });
         });
     }
