@@ -9,14 +9,15 @@ from ticketing.forms.widgets import AutoCompleteWiget
 class AutoCompleteField(CharField):
     __metaclass__ = models.SubfieldBase
 
-    def __init__(self, model, url=None, *args, **kwargs):
+    def __init__(self, model, url=None, user_field=None, *args, **kwargs):
         self.model = model
         self.url = url
+        self.user_field = user_field
         super(AutoCompleteField, self).__init__(*args, **kwargs)
 
         if not self.url:
             self.url = '/api/v1/%s/search/' % self.model._meta.module_name
-        self.widget = AutoCompleteWiget(url=url)
+        self.widget = AutoCompleteWiget(url=url, user_field=self.user_field)
 
     def prepare_value(self, value):
         if hasattr(value, '_meta'):

@@ -1,4 +1,4 @@
-<div class='autocomplete-field' data-source-url="{{ url }}">
+<div class='autocomplete-field' {% if user_field %}data-user-input="{{ user_field }}"{% endif %} data-source-url="{{ url }}">
     <input id="id_{{ name }}" name="{{ name }}" type="hidden" value="" />
     <input id="id_{{ name }}_helper" type="text" value="" />
 </div>

@@ -49,18 +49,21 @@ class TicketListView(TicketListMixin, generic.ListView):
 
 class RelatedProductInline(InlineFormSet):
     model = get_model('ticketing', 'RelatedProduct')
+    form_class = forms.RelatedProductForm
     extra = 1
     max_num = 1
 
 
 class RelatedOrderInline(InlineFormSet):
     model = get_model('ticketing', 'RelatedOrder')
+    form_class = forms.RelatedOrderForm
     extra = 1
     max_num = 1
 
 
 class RelatedLineInline(InlineFormSet):
     model = get_model('ticketing', 'RelatedLine')
+    form_class = forms.RelatedLineForm
     extra = 1
 
 

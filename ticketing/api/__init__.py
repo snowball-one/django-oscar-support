@@ -7,7 +7,10 @@ from django.template import Template, RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.core.paginator import Paginator, InvalidPage
 
-from tastypie import fields
+from sorl.thumbnail import get_thumbnail
+
+from oscar.templatetags.currency_filters import currency
+
 from tastypie.api import Api
 from tastypie.utils import trailing_slash
 from tastypie.exceptions import BadRequest
@@ -30,6 +33,16 @@ v1_api = Api(api_name='v1')
 
 class SearchableModelResource(ModelResource):
 
+    def override_urls(self):
+        return [
+            url(r"^(?P<resource_name>%s)/search%s$" % (
+                self._meta.resource_name,
+                trailing_slash()),
+                self.wrap_view('get_search'),
+                name="api_get_search"
+            )
+        ]
+
     def get_search(self, request, **kwargs):
         queryset = self.get_object_list(request)
         return self.get_search_in_queryset(queryset, request, **kwargs)
@@ -41,7 +54,7 @@ class SearchableModelResource(ModelResource):
 
         queryset = self.get_filtered_queryset(
             queryset,
-            request.GET.get('q', '')
+            request,
         )
 
         paginator = Paginator(queryset, 20)
@@ -124,18 +137,13 @@ class UserResource(SearchableModelResource):
         validation = FormValidation(form_class=RequesterCreateForm)
 
     def override_urls(self):
-        return [
+        urls = super(UserResource, self).override_urls()
+        return urls + [
             url(r"^agent/search%s$" % (
                 trailing_slash()),
                 self.wrap_view('get_agent_search'),
                 name="api_get_agent_search"
             ),
-            url(r"^(?P<resource_name>%s)/search%s$" % (
-                self._meta.resource_name,
-                trailing_slash()),
-                self.wrap_view('get_search'),
-                name="api_get_search"
-            )
         ]
 
     def dehydrate(self, bundle):
@@ -152,7 +160,8 @@ class UserResource(SearchableModelResource):
         queryset = self.get_object_list(request).filter(is_staff=True)
         return self.get_search_in_queryset(queryset, request, **kwargs)
 
-    def get_filtered_queryset(self, queryset, search_term):
+    def get_filtered_queryset(self, queryset, request):
+        search_term = request.GET.get('q', '')
         fn_search = search_term
         ln_search = fn_search
 
@@ -192,12 +201,99 @@ class UserResource(SearchableModelResource):
         return bundle
 
 
-class OrderResource(ModelResource):
-    user = fields.ForeignKey(UserResource, 'user')
+class OrderResource(SearchableModelResource):
+
+    def dehydrate(self, bundle):
+        order_label = "Order #%s placed by %s on %s for %s" % (
+            bundle.obj.number,
+            bundle.obj.email,
+            bundle.obj.date_placed.strftime('%Y-%m-%d %H:%M'),
+            currency(bundle.obj.total_incl_tax),
+        )
+
+        bundle.data['label'] = order_label
+        bundle.data['value'] = bundle.data['id']
+        return bundle
+
+    def get_filtered_queryset(self, queryset, request):
+        search_term = request.GET.get('q', '')
+        if request.GET.get('user', None):
+            queryset = queryset.filter(user__id=request.GET.get('user'))
+
+        return queryset.filter(number__istartswith=search_term)
 
     class Meta:
         queryset = get_model('order', 'Order').objects.all()
         resource_name = 'order'
+        authorization = ReadOnlyAuthorization()
+        authentication = SessionAuthentication()
+
+
+class ProductResource(SearchableModelResource):
+
+    def dehydrate(self, bundle):
+        product_label = "%s with UPC %s" % (
+            bundle.obj.title,
+            bundle.obj.upc,
+        )
+
+        image = bundle.obj.primary_image()
+        try:
+            image = getattr(image, 'original')
+        except AttributeError:
+            image = image.get('original', None)
+
+        try:
+            thumb_image = get_thumbnail(image, "40x40")
+        except IOError:
+            bundle.data['thumbnail'] = ''
+        else:
+            bundle.data['thumbnail'] = thumb_image.url
+
+        bundle.data['label'] = product_label
+        bundle.data['value'] = bundle.data['id']
+        return bundle
+
+    def get_filtered_queryset(self, queryset, request):
+        search_term = request.GET.get('q', '')
+        return queryset.filter(
+            Q(upc__istartswith=search_term) |
+            Q(title__icontains=search_term)
+        )
+
+    class Meta:
+        queryset = get_model('catalogue', 'Product').objects.all()
+        resource_name = 'product'
+        authorization = ReadOnlyAuthorization()
+        authentication = SessionAuthentication()
+
+
+class LineResource(SearchableModelResource):
+
+    def dehydrate(self, bundle):
+        line_label = "Line #%s of order #%s placed by %s on %s for %s" % (
+            bundle.obj.id,
+            bundle.obj.order.number,
+            bundle.obj.order.email,
+            bundle.obj.order.date_placed.strftime('%Y-%m-%d %H:%M'),
+            currency(bundle.obj.order.total_incl_tax),
+        )
+
+        bundle.data['label'] = line_label
+        bundle.data['value'] = bundle.data['id']
+        return bundle
+
+    def get_filtered_queryset(self, queryset, request):
+        search_term = request.GET.get('q', '')
+        return queryset.filter(
+            Q(order__number__istartswith=search_term) |
+            Q(product__title__icontains=search_term) |
+            Q(product__upc__istartswith=search_term)
+        )
+
+    class Meta:
+        queryset = get_model('order', 'Line').objects.all()
+        resource_name = 'line'
         authorization = ReadOnlyAuthorization()
         authentication = SessionAuthentication()
 
@@ -214,21 +310,14 @@ class GroupResource(SearchableModelResource):
         bundle.data['value'] = bundle.data['id']
         return bundle
 
-    def override_urls(self):
-        return [
-            url(r"^(?P<resource_name>%s)/search%s$" % (
-                self._meta.resource_name,
-                trailing_slash()),
-                self.wrap_view('get_search'),
-                name="api_get_search"
-            )
-        ]
-
-    def get_filtered_queryset(self, queryset, search_term):
+    def get_filtered_queryset(self, queryset, request):
+        search_term = request.GET.get('q', '')
         return queryset.filter(name__icontains=search_term)
 
 
 v1_api.register(CommunicationEventTypeResource())
 v1_api.register(UserResource())
+v1_api.register(ProductResource())
 v1_api.register(OrderResource())
+v1_api.register(LineResource())
 v1_api.register(GroupResource())

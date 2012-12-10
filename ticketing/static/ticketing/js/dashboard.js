@@ -90,14 +90,28 @@ ticketing.dashboard = {
                         response(data.objects);
                     });
                 },
+                focus: function () {
+                    // prevent value inserted on focus
+                    return false;
+                },
                 select: function (event, ui) {
                     searchInput.val(ui.item.label);
                     idInput.val(ui.item.value);
                     return false;
                 }
-            }).focus(function () {
-                $(this).autocomplete("search");
             });
+
+            if (searchInput.attr('id').match("^id_relatedproduct")) {
+                searchInput.data("autocomplete")._renderItem = function (ul, item) {
+                    return $("<li>")
+                        .data("item.autocomplete", item)
+                        .append("<a><div class='pull-left'><img src='" + item.thumbnail + "' /></div>" +
+                                "<div style='margin-left: 5px;'><strong>" + item.title + "</strong>" +
+                                                                "<br/><small>" + item.upc + "</small>" +
+                                "</div></a>")
+                        .appendTo(ul);
+                };
+            }
         });
     }
 };

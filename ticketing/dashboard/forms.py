@@ -91,3 +91,33 @@ class RequesterCreateForm(forms.ModelForm):
     class Meta:
         model = get_model('auth', 'User')
         fields = ['first_name', 'last_name', 'email']
+
+
+class RelatedOrderForm(forms.ModelForm):
+    order = AutoCompleteField(
+        model=get_model('order', 'Order'),
+        url='/api/v1/order/search/'
+    )
+
+    class Meta:
+        model = get_model('ticketing', 'RelatedOrder')
+
+
+class RelatedProductForm(forms.ModelForm):
+    product = AutoCompleteField(
+        model=get_model('catalogue', 'Product'),
+        url='/api/v1/product/search/'
+    )
+
+    class Meta:
+        model = get_model('ticketing', 'RelatedOrder')
+
+
+class RelatedLineForm(forms.ModelForm):
+    line = AutoCompleteField(
+        model=get_model('order', 'Line'),
+        url='/api/v1/line/search/'
+    )
+
+    class Meta:
+        model = get_model('ticketing', 'RelatedOrder')
