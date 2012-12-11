@@ -1,0 +1,134 @@
+{% extends "oscar/customer/profile.html" %}
+{% load i18n %}
+{% load thumbnail %}
+
+{% block title %}
+{% blocktrans with ticket_number=ticket.number %}Update ticket #{{ ticket_number }}{% endblocktrans %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+    <li>
+        <a href="{% url promotions:home %}">{% trans 'Home' %}</a>
+        <span class="divider">/</span>
+    </li>
+    <li>
+        <a href="{% url customer:summary %}">{% trans 'Account' %}</a>
+        <span class="divider">/</span>
+    </li>
+	<li class="active">
+            {% blocktrans with ticket_number=ticket.number %}Update ticket #{{ ticket_number }}{% endblocktrans %}
+        </li>
+</ul>
+{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h2>{% trans 'Account' %}</h2>
+</div>
+{% endblock header %}
+
+{% block subnavigation %}
+    {% include "partials/nav_profile.html" with support="active" %}
+{% endblock %}
+
+{% block subheader %}
+<div class="sub-header">
+    <h2>{% blocktrans with ticket_number=ticket.number %}Update ticket #{{ ticket_number }}{% endblocktrans %}</h2>
+</div>
+{% endblock subheader %}
+
+{% block content %}
+
+<div class="row-fluid">
+    <div class="span12">
+        <table class="table table-striped table-bordered">
+            <tr>
+                <th>{% trans "Status" %}</th>
+                <th>{% trans "Date created" %}</th>
+                <th>{% trans "Last updated" %}</th>
+                <th>{% trans "Assigned to" %}</th>
+            </tr>
+            <tr>
+                <td>{{ ticket.status.name }}</td>
+                <td>{{ ticket.date_created|date:"jS M Y H:i" }}</td>
+                <td>{{ ticket.date_updated|date:"jS M Y H:i" }}</td>
+                <td>{{ ticket.assignee.get_full_name|default:"-" }}</td>
+            </tr>
+
+            {% with related_orders=ticket.relatedorders.all %}
+                {% if related_orders|length %}
+                    <tr>
+                        <td colspan="4">
+                        {% trans "Related order(s):" %}
+                        {% for related_order in related_orders %}
+                            <a href="{% url customer:order related_order.order.number %}">
+                            {% blocktrans with order_number=related_order.order.number %}
+                            Order #{{ order_number }}
+                            {% endblocktrans %}
+                            </a>{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endwith %}
+
+            {% with related_products=ticket.relatedproducts.all %}
+                {% if related_products|length %}
+                    <tr>
+                        <td colspan="4">
+                        {% trans "Related product(s):" %}
+                        {% for related_product in related_products %}
+
+                            {% with product=related_product.product %}
+                                <a href="{% url catalogue:detail product.slug product.id %}">
+                                    {% thumbnail product.primary_image.original "40x40" as img %}
+                                        <img src="{{ img.url }}" />
+                                    {% endthumbnail %}
+                                {% blocktrans with product_number=product.title %}
+                                    {{ product_title }}
+                                {% endblocktrans %}
+                                </a>{% if not forloop.last %},{% endif %}
+                            {% endwith %}
+                        {% endfor %}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endwith %}
+        </table>
+    </div>
+</div>
+
+<form id="add-message-form" action="." method="post" class="form">
+    {% csrf_token %}
+    {% include "partials/form_fields.html" %}
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{% trans "Send message" %}</button>
+    </div>
+</form>
+
+<hr />
+
+{% for message in message_list %}
+    <div class="row-fluid">
+        <div class="span3">
+            {{ message.user.get_full_name|default:message.user.email }}<br />
+            {{ message.date_created|date:"jS M Y H:i" }}
+        </div>
+        <div class="span9 well">
+            {{ message.text|safe }}
+        </div>
+    </div>
+{% endfor %}
+
+<div class="row-fluid">
+    <div class="span3">
+        {{ ticket.requester.get_full_name|default:ticket.requester.email }}<br />
+        {{ ticket.date_created|date:"jS M Y H:i" }}
+    </div>
+    <div class="span9 well">
+        {{ ticket.body|safe }}
+    </div>
+</div>
+{% endblock content %}

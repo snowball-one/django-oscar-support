@@ -1,7 +1,5 @@
 from django.db.models import get_model
 
-Ticket = get_model('ticketing', 'Ticket')
-
 
 class TicketNumberGenerator(object):
 
@@ -9,7 +7,7 @@ class TicketNumberGenerator(object):
     def generate_ticket_number(cls):
         return {
             # we don't want the ticket number to start at zero
-            'number': Ticket.objects.count() + 1,
+            'number': get_model('ticketing', 'Ticket').objects.count() + 1,
             'subticket_number': 0,
         }
 

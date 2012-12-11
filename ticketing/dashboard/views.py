@@ -3,12 +3,10 @@ from django.views import generic
 from django.db.models import get_model, Q
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext as _
 
 from extra_views import CreateWithInlinesView, InlineFormSet
 
 from ticketing.dashboard import forms
-from ticketing.utils import TicketNumberGenerator
 
 Note = get_model('ticketing', 'Note')
 Ticket = get_model('ticketing', 'Ticket')
@@ -81,11 +79,7 @@ class TicketCreateView(CreateWithInlinesView):
                RelatedLineInline, RelatedFileInline]
 
     def forms_valid(self, form, inlines):
-        ticket_numbers = TicketNumberGenerator.generate_ticket_number()
-
         self.object = form.save(commit=False)
-        self.object.number = ticket_numbers['number']
-        self.object.subticket_number = ticket_numbers['subticket_number']
         self.object.save()
 
         for formset in inlines:
@@ -97,7 +91,7 @@ class TicketCreateView(CreateWithInlinesView):
             return self.default_status
 
         self.default_status, __ = TicketStatus.objects.get_or_create(
-            name=getattr(settings, 'TICKETING_DEFAULT_STATUS', _("New")),
+            name=getattr(settings, 'TICKETING_INITIAL_STATUS', 'New')
         )
         return self.default_status
 

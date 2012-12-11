@@ -26,7 +26,7 @@ def get_ticket_statuses():
 
 @register.assignment_tag
 def get_default_ticket_status():
-    default_name = getattr(settings, "TICKETING_DEFAULT_STATUS", "New")
+    default_name = getattr(settings, "TICKETING_INITIAL_STATUS", "New")
     status, __ = TicketStatus.objects.get_or_create(
         name=default_name,
     )
