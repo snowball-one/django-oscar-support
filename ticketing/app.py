@@ -1,4 +1,5 @@
 from django.conf.urls.defaults import patterns, url
+from django.contrib.auth.decorators import login_required
 
 from oscar.core.application import Application
 
@@ -33,6 +34,9 @@ class TicketingApplication(Application):
             ),
         )
         return self.post_process_urls(urlpatterns)
+
+    def get_url_decorator(self, url_name):
+        return login_required
 
 
 application = TicketingApplication()
