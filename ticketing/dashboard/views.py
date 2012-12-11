@@ -3,11 +3,9 @@ from django.views import generic
 from django.db.models import get_model, Q
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext as _
 
 from extra_views import CreateWithInlinesView, InlineFormSet
 
-from ticketing import TICKETING_INITIAL_STATUS
 from ticketing.dashboard import forms
 
 Note = get_model('ticketing', 'Note')
@@ -93,7 +91,7 @@ class TicketCreateView(CreateWithInlinesView):
             return self.default_status
 
         self.default_status, __ = TicketStatus.objects.get_or_create(
-            name=TICKETING_INITIAL_STATUS
+            name=getattr(settings, 'TICKETING_INITIAL_STATUS', 'New')
         )
         return self.default_status
 

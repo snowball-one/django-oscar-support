@@ -171,7 +171,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 ##### TICKETING SETTINGS #####
-TICKETING_DEFAULT_STATUS = 'New'
+TICKETING_INITIAL_STATUS = "New"
 
 
 # Haystack settings
