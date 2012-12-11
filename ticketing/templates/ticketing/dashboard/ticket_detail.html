@@ -17,154 +17,161 @@
 {% block body_class %}support home{% endblock %}
 
 {% block breadcrumbs %}
+<ul class="breadcrumb">  	
+    <li>
+        <a href="{% url dashboard:index %}">{% trans "Dashboard" %}</a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active">{% trans "Support tickets" %}</li>
+</ul>
 {% endblock %}
 
 {% block header %}
+<div class="page-header">
+    <h1>{% trans "Support tickets" %}</h1>
+</div>
 {% endblock %}
 
 {% block dashboard_content %}
-<div class="table-header">
-    <i class="icon-comments-alt icon-large"></i>{% trans "Create a new ticket" %}
-</div>
-
-<div class="well">
-    <a href="{% url ticketing-dashboard:ticket-create %}" class="btn btn-primary btn-large">
-        <i class="icon-plus"></i> {% trans "Create new ticket" %}
-    </a>
-</div>
-
-<div class="table-header">
-    <i class="icon-comments icon-large"></i>{% trans "Your tickets" %}
-</div>
-
-<div class="content-block">
-<form id="ticket-update-form" data-ticket-id="{{ selected_ticket.id }}" method="post" action="." class="form-inline wysiwyg">
-    {% csrf_token %}
-    <div class='row-fluid'>
-        <aside class="span3">
-            {% for ticket in ticket_list %}
-                <a href="{% url ticketing-dashboard:ticket-update ticket.id %}" style="text-decoration: none;">
-                <div class="well {% if ticket.id == selected_ticket.id %}well-success{% endif %}">
-                    <div class="subheader">
-                        <h4>
+    <form id="ticket-update-form" data-ticket-id="{{ selected_ticket.id }}" method="post" action="." class="form-inline wysiwyg">
+        {% csrf_token %}
+        <div class='row-fluid'>
+            <aside class="span3">
+                <div class="table-header">
+                    <i class="icon-comments icon-large"></i>{% trans "Tickets" %}
+                    <a href="{% url ticketing-dashboard:ticket-create %}" class="btn btn-primary pull-right">
+                        <i class="icon-plus"></i> {% trans "Create new ticket" %}
+                    </a>
+                </div>
+                <div class="ticket-list">
+                    {% for ticket in ticket_list %}
+                    <div class="well {% if ticket.id == selected_ticket.id %}active{% endif %}">
+                        <a href="{% url ticketing-dashboard:ticket-update ticket.id %}" class="btn {% if ticket.id == selected_ticket.id %}btn-primary{% endif %} pull-right">Select</a>
+                        <p>
                             {% blocktrans with number=ticket.printable_number subject=ticket.subject|truncatechars:30 %}
-                            Ticket #{{ number }}: <strong>{{ subject }}</strong>
+                            <strong>Ticket #{{ number }}:</strong> {{ subject }}</br>
                             {% endblocktrans %}
+                            <strong>{% trans "Last modified:" %}</strong> {{ ticket.date_updated|date:"jS M Y H:i" }}<br/>
+                            <strong>Status:</strong> <span class="label">{{ ticket.status.name }}</span> <span class="label">{{ ticket.type.name }}</span>
+                        </p>   
+                    </div>
+                    {% endfor %}
+                </div>
+            </aside>
+
+            <div class="span9">
+                <div class="table-header">
+                    <i class="icon-edit icon-large"></i>{% trans "View and Edit Tickets" %}
+                </div>
+                <div class="content-block">
+                {% if selected_ticket %}
+                    <div class="well">
+                        <h4>
+                            <strong>{% trans "Ticket #" %}{{ selected_ticket.printable_number }}:</strong>
+                            {{ selected_ticket.subject|truncatechars:30 }}
                             <div class="pull-right">
-                                <span class="label">{{ ticket.status.name }}</span>
-                                <span class="label">{{ ticket.type.name }}</span>
+                                <span class="label">{{ selected_ticket.status.name }}</span>
+                                <span class="label">{{ selected_ticket.type.name }}</span>
                             </div>
                         </h4>
-                    </div>
-                    <div>{% trans "Last modified:" %}{{ ticket.date_updated|date:"jS M Y H:i" }}</div>
-                </div>
-                </a>
-            {% endfor %}
-        </aside>
-
-        <div class="span9">
-            {% if selected_ticket %}
-                <div class="well">
-                    <h4>
-                        <strong>{% trans "Ticket #" %}{{ selected_ticket.printable_number }}:</strong>
-                        {{ selected_ticket.subject|truncatechars:30 }}
-                        <div class="pull-right">
-                            <span class="label">{{ selected_ticket.status.name }}</span>
-                            <span class="label">{{ selected_ticket.type.name }}</span>
-                        </div>
-                    </h4>
-                    <table style="width: 100%;">
-                        <tr>
-                            <td rowspan="2"></td>
-                            {% with requester=selected_ticket.requester %}
+                        <table style="width: 100%;">
+                            <tr>
+                                <td rowspan="2"></td>
+                                {% with requester=selected_ticket.requester %}
+                                    <td>
+                                        <strong>{% trans "From:" %}</strong>
+                                        {{ requester.get_full_name|default:requester.email }}
+                                    </td>
+                                {% endwith %}
                                 <td>
-                                    <strong>{% trans "From:" %}</strong>
-                                    {{ requester.get_full_name|default:requester.email }}
+                                    <strong>{% trans "Last updated:" %}</strong>
+                                    {{ selected_ticket.date_updated|date:"jS M Y H:i" }}i
                                 </td>
-                            {% endwith %}
-                            <td>
-                                <strong>{% trans "Last updated:" %}</strong>
-                                {{ selected_ticket.date_updated|date:"jS M Y H:i" }}i
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                {% for field in form.get_property_fields %}
-                                    {% include "ticketing/partials/form_field_inline.html" %}
-                                {% endfor %}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    {% for field in form.get_property_fields %}
+                                        {% include "ticketing/partials/form_field_inline.html" %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
 
-                {% if selected_ticket.relatedorders.all|length %}
-                    <hr/>
-                    {% include "ticketing/dashboard/partials/related_orders.html" with ticket=selected_ticket %}
-                {% endif %}
-
-                {% if selected_ticket.relatedlines.all|length %}
-                    <hr/>
-                    {% include "ticketing/dashboard/partials/related_lines.html" with ticket=selected_ticket %}
-                {% endif %}
-
-                {% if selected_ticket.relatedproducts.all|length %}
-                    <hr/>
-                    {% include "ticketing/dashboard/partials/related_products.html" with ticket=selected_ticket %}
-                {% endif %}
-
-                <hr/>
-
-                {% for field in form.get_message_fields %}
-                    {% if field.is_hidden %}
-                        {{ field }}
-                    {% else %}
-                        <div class="control-group {% if field.errors %}error{% endif %}">
-                            {{ field }}
-                            {% for error in field.errors %}
-                                <ul class="help-block">
-                                    <li>{{ error }}</li>
-                                </ul>
-                            {% endfor %}
-                        </div>
+                    {% if selected_ticket.relatedorders.all|length %}
+                        <hr/>
+                        {% include "ticketing/dashboard/partials/related_orders.html" with ticket=selected_ticket %}
                     {% endif %}
-                {% endfor %}
 
-                <hr/>
+                    {% if selected_ticket.relatedlines.all|length %}
+                        <hr/>
+                        {% include "ticketing/dashboard/partials/related_lines.html" with ticket=selected_ticket %}
+                    {% endif %}
 
-                {% get_messages selected_ticket as selected_ticket_messages %}
-                {% for msg in selected_ticket_messages %}
-                <div class="row-fluid">
-                    <div class="span2">
-                        {{ msg.user.get_fullname|default:msg.user.email }}<br/>
-                        {{ msg.date_created|date:"jS M Y H:i" }}
+                    {% if selected_ticket.relatedproducts.all|length %}
+                        <hr/>
+                        {% include "ticketing/dashboard/partials/related_products.html" with ticket=selected_ticket %}
+                    {% endif %}
+
+                    <hr/>
+
+                    {% for field in form.get_message_fields %}
+                        {% if field.is_hidden %}
+                            {{ field }}
+                        {% else %}
+                            <div class="control-group {% if field.errors %}error{% endif %}">
+                                {{ field }}
+                                {% for error in field.errors %}
+                                    <ul class="help-block">
+                                        <li>{{ error }}</li>
+                                    </ul>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <hr/>
+
+                    {% get_messages selected_ticket as selected_ticket_messages %}
+                    {% for msg in selected_ticket_messages %}
+                    <div class="row-fluid">
+                        <div class="span2">
+                            {{ msg.user.get_fullname|default:msg.user.email }}<br/>
+                            {{ msg.date_created|date:"jS M Y H:i" }}
+                        </div>
+                        <div class="span9 well {% if msg.is_internal %}well-danger{% endif %}">
+                            {{ msg.text|safe }}
+                        </div>
                     </div>
-                    <div class="span9 well {% if msg.is_internal %}well-danger{% endif %}">
-                        {{ msg.text|safe }}
+                    <hr />
+                    {% endfor %}
+
+                    <div class="row-fluid">
+                        <div class="span2">
+                            {{ selected_ticket.requester.get_fullname|default:selected_ticket.requester.email }}<br/>
+                            {{ selected_ticket.date_created|date:"jS M Y H:i" }}
+                        </div>
+                        <div class="span9 well">
+                            {{ selected_ticket.body|safe }}
+                        </div>
                     </div>
+
+                    <div class='row-fluid'>
+                        <div class="form-actions">
+                            {% include "ticketing/dashboard/partials/save_with_status.html" with ticket=selected_ticket %}
+                            {% trans "or" %} <a href="{% url ticketing-dashboard:ticket-list %}">{% trans "cancel" %}</a>
+                        </div>
+                    </div>
+                {% else %}
+                <div class="well">
+                    <p>Click on an individual ticket on the left to view or edit it. If you want to update or merge multiple tickets, select more than one.</p>
                 </div>
-                <hr />
-                {% endfor %}
-
-                <div class="row-fluid">
-                    <div class="span2">
-                        {{ selected_ticket.requester.get_fullname|default:selected_ticket.requester.email }}<br/>
-                        {{ selected_ticket.date_created|date:"jS M Y H:i" }}
-                    </div>
-                    <div class="span9 well">
-                        {{ selected_ticket.body|safe }}
-                    </div>
+               
+                {% endif %}
                 </div>
+            </div>
 
-                <div class='row-fluid'>
-                    <div class="form-actions">
-                        {% include "ticketing/dashboard/partials/save_with_status.html" with ticket=selected_ticket %}
-                        {% trans "or" %} <a href="{% url ticketing-dashboard:ticket-list %}">{% trans "cancel" %}</a>
-                    </div>
-                </div>
-            {% endif %}
         </div>
+    </form>
 
-    </div>
-</form>
-</div>
 {% endblock %}

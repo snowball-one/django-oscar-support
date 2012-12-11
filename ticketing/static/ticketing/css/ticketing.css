@@ -1,0 +1,37 @@
+.ticket-list .well {
+  margin-bottom: 0;
+  border-top-width: 0;
+  position: relative;
+}
+.ticket-list .well:first-child {
+  border-top-width: 1px;
+}
+.ticket-list .well:nth-child(odd) {
+  background: #fff;
+}
+.ticket-list .well:hover {
+  background: #f1faff;
+}
+.ticket-list .well.active {
+  background: #f1faff;
+}
+.ticket-list .well.active:after {
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid #f1faff;
+  border-top: 10px solid transparent;
+  content: "";
+  display: inline-block;
+  position: absolute;
+  right: -10px;
+  top: 40px;
+}
+.ticket-list .well.active:before {
+  border-bottom: 11px solid transparent;
+  border-left: 11px solid #bbb;
+  border-top: 11px solid transparent;
+  content: "";
+  display: inline-block;
+  position: absolute;
+  right: -11px;
+  top: 39px;
+}
