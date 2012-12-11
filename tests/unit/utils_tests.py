@@ -9,7 +9,7 @@ from ticketing.utils import TicketNumberGenerator
 class TestTheTicketNumberGenerator(TestCase):
 
     def test_can_generate_a_new_parent_ticket_number(self):
-        with mock.patch('ticketing.utils.Ticket.objects.count') as CountMock:
+        with mock.patch('ticketing.models.Ticket.objects.count') as CountMock:
             CountMock.return_value = 0
 
             number_kwargs = TicketNumberGenerator.generate_ticket_number()

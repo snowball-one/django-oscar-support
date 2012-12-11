@@ -3,6 +3,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from model_utils.managers import InheritanceManager
 
+from ticketing.utils import TicketNumberGenerator
+
 
 class TicketType(models.Model):
     name = models.CharField(_("Name"), max_length=64, unique=True)
@@ -51,8 +53,6 @@ class Ticket(models.Model):
     assignee = models.ForeignKey('auth.User', verbose_name=_("Assignee"),
                                  null=True, blank=True, related_name="tickets")
 
-    #FIXME: add tagging capabilities
-
     # main content of the (initial) ticket
     subject = models.CharField(_("Subject"), max_length=255)
     body = models.TextField(_("Body"))
@@ -69,6 +69,13 @@ class Ticket(models.Model):
         if self.subticket_number:
             return "%s-%s" % (self.number, self.subticket_number)
         return self.number
+
+    def save(self, **kwargs):
+        if not self.number:
+            ticket_numbers = TicketNumberGenerator.generate_ticket_number()
+            self.number = ticket_numbers['number']
+            self.subticket_number = ticket_numbers['subticket_number']
+        return super(Ticket, self).save(**kwargs)
 
     def __unicode__(self):
         return "Ticket #%s-%s" % (self.number, self.subticket_number)

@@ -27,7 +27,7 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
+        'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(os.path.dirname(__file__), 'sandbox.sqlite3'),
     }
 }
@@ -133,7 +133,6 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'django.contrib.gis',
 
     'django_extensions',
     'debug_toolbar',
