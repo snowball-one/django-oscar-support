@@ -169,10 +169,8 @@ OSCAR_SHOP_TAGLINE = "Make your customers happy!"
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-
 ##### TICKETING SETTINGS #####
-TICKETING_INITIAL_STATUS = "New"
-
+from ticketing.defaults import *
 
 # Haystack settings
 HAYSTACK_CONNECTIONS = {
