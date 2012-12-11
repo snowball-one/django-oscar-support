@@ -6,12 +6,19 @@ from django.core.urlresolvers import reverse
 
 from extra_views import CreateWithInlinesView, InlineFormSet
 
+from ticketing import defaults
 from ticketing.dashboard import forms
 
 Note = get_model('ticketing', 'Note')
 Ticket = get_model('ticketing', 'Ticket')
 Message = get_model('ticketing', 'Message')
 TicketStatus = get_model('ticketing', 'TicketStatus')
+
+TICKETING_INITIAL_STATUS = getattr(
+    settings,
+    "TICKETING_INITIAL_STATUS",
+    defaults.TICKETING_INITIAL_STATUS
+)
 
 
 class TicketListMixin(object):
@@ -91,7 +98,7 @@ class TicketCreateView(CreateWithInlinesView):
             return self.default_status
 
         self.default_status, __ = TicketStatus.objects.get_or_create(
-            name=getattr(settings, 'TICKETING_INITIAL_STATUS', 'New')
+            name=TICKETING_INITIAL_STATUS
         )
         return self.default_status
 

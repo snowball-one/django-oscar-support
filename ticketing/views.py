@@ -1,13 +1,21 @@
 from django.views import generic
+from django.conf import settings
 from django.db.models import get_model
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
+from ticketing.defaults import TICKETING_RESOLVED_STATUS
 from ticketing.forms import TicketUpdateForm, TicketCreateForm
 
 Ticket = get_model('ticketing', 'Ticket')
 Message = get_model('ticketing', 'Message')
 TicketStatus = get_model('ticketing', 'TicketStatus')
+
+TICKETING_RESOLVED_STATUS = getattr(
+    settings,
+    "TICKETING_RESOLVED_STATUS",
+    TICKETING_RESOLVED_STATUS
+)
 
 
 class TicketListView(generic.ListView):
@@ -24,7 +32,9 @@ class TicketListView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         ctx = super(TicketListView, self).get_context_data(**kwargs)
-        status, __ = TicketStatus.objects.get_or_create(name="Resolved")
+        status, __ = TicketStatus.objects.get_or_create(
+            name=TICKETING_RESOLVED_STATUS
+        )
         ctx['open_ticket_list'] = self.get_queryset().exclude(status=status)
         ctx['resolved_ticket_list'] = self.get_queryset().filter(status=status)
         return ctx

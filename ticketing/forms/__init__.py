@@ -5,9 +5,17 @@ from django.utils.translation import ugettext_lazy as _
 
 from oscar.templatetags.currency_filters import currency
 
+from ticketing import defaults
+
 Order = get_model('order', 'Order')
 RelatedOrder = get_model("ticketing", "RelatedOrder")
 TicketStatus = get_model("ticketing", "TicketStatus")
+
+TICKETING_INITIAL_STATUS = getattr(
+    settings,
+    "TICKETING_INITIAL_STATUS",
+    defaults.TICKETING_INITIAL_STATUS
+)
 
 
 class TicketUpdateForm(forms.ModelForm):
@@ -42,7 +50,7 @@ class TicketCreateForm(forms.ModelForm):
         instance = super(TicketCreateForm, self).save(commit=False)
 
         initial_status, __ = TicketStatus.objects.get_or_create(
-            name=getattr(settings, 'TICKETING_INITIAL_STATUS', "New")
+            name=TICKETING_INITIAL_STATUS
         )
         instance.status = initial_status
         instance.requester = self.user

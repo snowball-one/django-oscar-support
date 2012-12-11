@@ -3,6 +3,7 @@ from django.db.models import get_model
 from django.utils.translation import ugettext_lazy as _
 
 from ticketing.forms.fields import AutoCompleteField
+from ticketing.forms.widgets import CustomRadioFieldRenderer
 
 User = get_model('auth', 'User')
 CommunicationEventType = get_model('customer', 'CommunicationEventType')
@@ -46,10 +47,13 @@ class TicketUpdateForm(forms.ModelForm):
         ('message', _("Public reply")),
         ('note', _("Internal note")),
     )
-    message_type = forms.ChoiceField(widget=forms.RadioSelect(),
-                                     choices=MESSAGE_CHOICES,
-                                     label=_("Message type"),
-                                     initial='message', required=False)
+    message_type = forms.ChoiceField(
+        widget=forms.RadioSelect(renderer=CustomRadioFieldRenderer),
+        choices=MESSAGE_CHOICES,
+        label=_("Message type"),
+        initial='message',
+        required=False
+    )
     message_text = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}),
                                    label=_("Message text"), required=False)
 

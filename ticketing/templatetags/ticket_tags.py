@@ -2,9 +2,17 @@ from django import template
 from django.conf import settings
 from django.db.models import get_model
 
+from ticketing import defaults
+
 TicketStatus = get_model('ticketing', 'TicketStatus')
 
 register = template.Library()
+
+TICKETING_INITIAL_STATUS = getattr(
+    settings,
+    "TICKETING_INITIAL_STATUS",
+    defaults.TICKETING_INITIAL_STATUS
+)
 
 
 @register.assignment_tag(takes_context=True)
@@ -26,8 +34,7 @@ def get_ticket_statuses():
 
 @register.assignment_tag
 def get_default_ticket_status():
-    default_name = getattr(settings, "TICKETING_INITIAL_STATUS", "New")
     status, __ = TicketStatus.objects.get_or_create(
-        name=default_name,
+        name=TICKETING_INITIAL_STATUS
     )
     return status
