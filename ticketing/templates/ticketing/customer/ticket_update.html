@@ -2,6 +2,8 @@
 {% load i18n %}
 {% load thumbnail %}
 
+{% block body_class %}account-pages{% endblock %}
+
 {% block title %}
 {% blocktrans with ticket_number=ticket.number %}Update ticket #{{ ticket_number }}{% endblocktrans %} | {{ block.super }}
 {% endblock %}
@@ -111,24 +113,14 @@
 <hr />
 
 {% for message in message_list %}
-    <div class="row-fluid">
-        <div class="span3">
-            {{ message.user.get_full_name|default:message.user.email }}<br />
-            {{ message.date_created|date:"jS M Y H:i" }}
-        </div>
-        <div class="span9 well">
-            {{ message.text|safe }}
-        </div>
-    </div>
+<div class="well">
+    <p><strong>From:</strong> {{ message.user.get_full_name|default:message.user.email }}, {{ message.date_created|date:"jS M Y H:i" }}</p>
+    {{ message.text|safe }}
+</div>
 {% endfor %}
 
-<div class="row-fluid">
-    <div class="span3">
-        {{ ticket.requester.get_full_name|default:ticket.requester.email }}<br />
-        {{ ticket.date_created|date:"jS M Y H:i" }}
-    </div>
-    <div class="span9 well">
-        {{ ticket.body|safe }}
-    </div>
+<div class="well">
+    <p><strong>From:</strong> {{ ticket.requester.get_full_name|default:ticket.requester.email }}, {{ ticket.date_created|date:"jS M Y H:i" }}</p>
+    {{ ticket.body|safe }}
 </div>
 {% endblock content %}

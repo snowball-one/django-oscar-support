@@ -1,21 +1,11 @@
 {% load i18n %}
 {% load currency_filters %}
-
-{% trans "Related orders:" %}
-<ul class="nav nav-pills">
+<div class="table-header">
+    <h3>{% trans "Related orders:" %} <a class="btn pull-right" data-toggle="collapse" data-target="#related-orders">{% trans "Show/Hide" %}{{ order.number }}</a></h3>
+</div>
 {% for rel_order in ticket.relatedorders.all %}
     {% with order=rel_order.order %}
-        <li>
-            <a class="nav nav-pills" data-toggle="collapse" data-target="#order-{{ order.number }}">
-                {% trans "#" %}{{ order.number }}
-            </a>
-        </li>
-    {% endwith %}
-{% endfor %}
-</ul>
-{% for rel_order in ticket.relatedorders.all %}
-    {% with order=rel_order.order %}
-        <div id="order-{{ order.number }}" class="collapse">
+        <div id="related-orders" class="collapse in">
             <table class="table table-bordered table-striped">
                 <tr>
                     <th>{% trans "Order number" %}</th>

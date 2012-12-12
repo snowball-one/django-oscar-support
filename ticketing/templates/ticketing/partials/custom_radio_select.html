@@ -1,4 +1,2 @@
-<label {{ label_for }}>
-    <input type="radio" name="{{ name }}" {% if checked %}checked="checked"{% endif %} value="{{ value }}" {{ attrs }}/>
-    {{ choice_label }}
-</label>
+<input type="radio" name="{{ name }}" {% if checked %}checked="checked"{% endif %} value="{{ value }}" {{ attrs|safe }}/>
+<label {{ label_for|safe }}> {{ choice_label }}</label>
