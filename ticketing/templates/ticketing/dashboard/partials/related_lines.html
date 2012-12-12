@@ -1,24 +1,12 @@
 {% load i18n %}
 {% load currency_filters %}
 
-{% trans "Related lines:" %}
-<ul class="nav nav-pills">
+<div class="table-header">
+    <h3>{% trans "Related lines" %} <a class="btn pull-right" data-toggle="collapse" data-target="#related-lines">{% trans "Show/Hide" %}{{ order.number }}</a></h3>
+</div>
 {% for rel_line in ticket.relatedlines.all %}
     {% with line=rel_line.line %}
-        <li>
-            <a class="nav nav-pills" data-toggle="collapse" data-target="#line-{{ line.id }}">
-                {% blocktrans with order_number=line.order.number line_id=line.id %}
-                    Line #{{ line_id }} in order #{{ order_number }}
-                {% endblocktrans %}
-            </a>
-        </li>
-    {% endwith %}
-{% endfor %}
-</ul>
-
-{% for rel_line in ticket.relatedlines.all %}
-    {% with line=rel_line.line %}
-        <div id="line-{{ line.id }}" class="collapse">
+        <div id="related-lines" class="collapse in">
             <table class="table table-bordered table-striped">
                 <tr>
                     <th>{% trans "Order number" %}</th>

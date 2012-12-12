@@ -2,29 +2,16 @@
 {% load thumbnail %}
 {% load currency_filters %}
 
-{% trans "Related products:" %}
-<ul class="nav nav-pills">
+<div class="table-header">
+    <h3>{% trans "Related products:" %} <a class="btn pull-right" data-toggle="collapse" data-target="#related-products">{% trans "Show/Hide" %}{{ order.number }}</a></h3>
+</div>
 {% for rel_product in ticket.relatedproducts.all %}
     {% with product=rel_product.product %}
-        <li>
-            <a class="nav nav-pills" data-toggle="collapse" data-target="#product-{{ product.id }}">
-                {% thumbnail product.primary_image.original "50x50" as img %}
-                    <img src="{{ img.url }}" />
-                {% endthumbnail %}
-                {{ product.title|truncatechars:30 }}
-            </a>
-        </li>
-    {% endwith %}
-{% endfor %}
-</ul>
-
-{% for rel_product in ticket.relatedproducts.all %}
-    {% with product=rel_product.product %}
-        <div id="product-{{ product.id }}" class="collapse">
+        <div id="related-products" class="collapse in">
             <table class="table table-bordered table-striped">
                 <tr>
                     <th>{% trans "UPC" %}</th>
-                    <th>{% trans "Title" %}</th>
+                    <th colspan="2">{% trans "Title" %}</th>
                     <th>{% trans "Product class" %}</th>
                     <th>{% trans "Partner" %}</th>
                     <th>{% trans "Partner SKU" %}</th>
@@ -34,6 +21,11 @@
                 </tr>
                 <tr>
                     <td>{{ product.upc }}</td>
+                    <td>
+                        {% thumbnail product.primary_image.original "50x50" as img %}
+                            <img src="{{ img.url }}" />
+                        {% endthumbnail %}
+                    </td>
                     <td>{{ product.title }}</td>
                     <td>{{ product.product_class.name }}</td>
                     <td>{{ product.stockrecord.partner.name|default:"-" }}</td>

@@ -16,7 +16,10 @@
         {% for ticket_status in statuses %}
         <li data-status-id="{{ ticket_status.id }}">
             <a href=".">
-                <i class="icon-{{ ticket_status.name|lower }}"></i>
+                {% comment %}
+                    Removed until we get more time to think about this 
+                    <i class="icon-{{ ticket_status.name|lower }}"></i>
+                {% endcomment %}
                 {% blocktrans with status=ticket_status %}
                     Save as <strong>{{ status }}</strong>
                 {% endblocktrans %}

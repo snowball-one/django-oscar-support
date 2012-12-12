@@ -35,10 +35,12 @@ class CustomRadioInput(RadioInput):
         if 'id' in self.attrs:
             self.attrs['id'] = '%s_%s' % (self.attrs['id'], self.index)
 
+        print self.attrs['id']
         if 'id' in self.attrs:
             label_for = ' for="%s"' % self.attrs['id']
         else:
             label_for = ''
+        print label_for 
 
         choice_label = conditional_escape(force_unicode(self.choice_label))
         return render_to_string(self.template_name, Context({
