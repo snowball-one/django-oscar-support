@@ -1,5 +1,6 @@
 {% extends "oscar/customer/profile.html" %}
 {% load i18n %}
+{% load url from future %}
 
 {% block title %}
 {% trans 'Your tickets' %} | {{ block.super }}
@@ -10,11 +11,11 @@
 {% block breadcrumbs %}
 <ul class="breadcrumb">
     <li>
-        <a href="{% url promotions:home %}">{% trans 'Home' %}</a>
+        <a href="{% url 'promotions:home' %}">{% trans 'Home' %}</a>
         <span class="divider">/</span>
     </li>
     <li>
-        <a href="{% url customer:summary %}">{% trans 'Account' %}</a>
+        <a href="{% url 'customer:summary' %}">{% trans 'Account' %}</a>
         <span class="divider">/</span>
     </li>
 	<li class="active">{% trans 'Your tickets' %}</li>
@@ -40,7 +41,7 @@
 {% block content %}
 
 <div class="well">
-    <a class="btn btn-success" href="{% url ticketing:customer-ticket-create %}">
+    <a class="btn btn-success" href="{% url 'ticketing:customer-ticket-create' %}">
         <i class="icon-inverse icon-plus"></i>
         {% trans "Create new ticket" %}
     </a>

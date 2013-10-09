@@ -1,6 +1,7 @@
 {% extends 'ticketing/dashboard/layout.html' %}
 {% load form_tags %}
 {% load i18n %}
+{% load url from future %}
 
 {% block extrahead %}
     {{ block.super }}
@@ -12,7 +13,7 @@
 {% block breadcrumbs %}
 <ul class="breadcrumb">  	
     <li>
-        <a href="{% url dashboard:index %}">{% trans "Dashboard" %}</a>
+        <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
         <span class="divider">/</span>
     </li>
     <li class="active">{% trans "Support" %}</li>
@@ -119,14 +120,14 @@
             <div class="pull-right">
                 {% include "ticketing/dashboard/partials/save_with_status.html" %}
             </div>
-            <a class="btn" href="{% url ticketing-dashboard:ticket-list %}">{% trans "cancel" %}</a>
+            <a class="btn" href="{% url 'ticketing-dashboard:ticket-list' %}">{% trans "cancel" %}</a>
         </div>
     </div>
 </form>
 
 <div id="requester-create-form-modal" class="modal hide fade" tabindex="-1"
      role="dialog" aria-labelledby="requester-create-form-modal-label" aria-hidden="true">
-    <form id="create-user-form" method="post" action="{% url api_dispatch_list "v1" "user" %}">
+    <form id="create-user-form" method="post" action="{% url 'api_dispatch_list' "v1" "user" %}">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3 id="requester-create-form-modal-label">{% trans "Create new user" %}</h3>

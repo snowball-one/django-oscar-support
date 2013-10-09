@@ -2,13 +2,14 @@
 {% load currency_filters %}
 {% load ticket_tags %}
 {% load i18n %}
+{% load url from future %}
 
 {% block body_class %}support home{% endblock %}
 
 {% block breadcrumbs %}
 <ul class="breadcrumb">  	
     <li>
-        <a href="{% url dashboard:index %}">{% trans "Dashboard" %}</a>
+        <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
         <span class="divider">/</span>
     </li>
     <li class="active">{% trans "Support tickets" %}</li>
@@ -28,14 +29,14 @@
         <aside class="span3">
             <div class="table-header">
                 <i class="icon-comments icon-large"></i>{% trans "Tickets" %}
-                <a href="{% url ticketing-dashboard:ticket-create %}" class="btn btn-primary pull-right">
+                <a href="{% url 'ticketing-dashboard:ticket-create' %}" class="btn btn-primary pull-right">
                     <i class="icon-plus"></i> {% trans "Create new ticket" %}
                 </a>
             </div>
             <div class="ticket-list">
                 {% for ticket in ticket_list %}
                 <div class="well {% if ticket.id == selected_ticket.id %}active{% endif %}">
-                    <a href="{% url ticketing-dashboard:ticket-update ticket.id %}" class="btn {% if ticket.id == selected_ticket.id %}btn-primary{% endif %} pull-right">Select</a>
+                    <a href="{% url 'ticketing-dashboard:ticket-update' ticket.id %}" class="btn {% if ticket.id == selected_ticket.id %}btn-primary{% endif %} pull-right">Select</a>
                     <p>
                         {% blocktrans with number=ticket.printable_number subject=ticket.subject|truncatechars:30 %}
                         <strong>Ticket #{{ number }}:</strong> {{ subject }}</br>
@@ -126,7 +127,7 @@
 
            
                 <div class="form-actions">
-                    <a href="{% url ticketing-dashboard:ticket-list %}" class="btn pull-left">{% trans "cancel" %}</a>
+                    <a href="{% url 'ticketing-dashboard:ticket-list' %}" class="btn pull-left">{% trans "cancel" %}</a>
                     <div class="pull-right">
                         {% include "ticketing/dashboard/partials/save_with_status.html" with ticket=selected_ticket %}
                     </div>

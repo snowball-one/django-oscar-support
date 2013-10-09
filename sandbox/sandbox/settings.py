@@ -140,7 +140,8 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     'south',
 
-    'ticketing',
+    #'ticketing',
+    'mrwolfe',
 ]
 
 from oscar import get_core_apps
@@ -170,7 +171,7 @@ OSCAR_SHOP_TAGLINE = "Make your customers happy!"
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 ##### TICKETING SETTINGS #####
-from ticketing.defaults import *
+#from ticketing.defaults import *
 
 # Haystack settings
 HAYSTACK_CONNECTIONS = {
@@ -178,6 +179,46 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
     },
 }
+
+ISSUE_STATUS_CHOICES = (
+    ('open', 'Open'),
+    ('closed', 'Closed'),
+    ('progress', 'In progress'),
+    ('hold', 'On hold')
+)
+
+ISSUE_STATUS_OPEN = ISSUE_STATUS_CHOICES[0][0]
+ISSUE_STATUS_CLOSED = ISSUE_STATUS_CHOICES[1][0]
+ISSUE_STATUS_PROGRESS = ISSUE_STATUS_CHOICES[2][0]
+ISSUE_STATUS_HOLD = ISSUE_STATUS_CHOICES[3][0]
+
+ISSUE_STATUS_DEFAULT = ISSUE_STATUS_OPEN
+
+# Do we allow incoming messages from non contacts?
+# If so, the sender address is set into the Issue.submitter_address field
+#
+ALLOW_NON_CONTACTS = True
+
+MESSAGE_FIELDS = (("subject", "Subject"),
+                  ("from", "From"),
+                  ("to", "To"),
+                  ("text", "Message body"))
+
+# Override notification templates if you wish
+#
+NOTIFICATION_MAP = {
+    'issue_received': 'notification/issue_received.html',
+    'issue_closed': 'notification/issue_closed.html',
+    'issue_created': 'notification/issue_created.html',
+}
+
+# This is the address of your actual site. Used for sending URL's of
+# issues to operators.
+#
+HOST_ADDRESS = "http://support.evilempire.com"
+
+DEFAULT_FROM_ADDR = "support@evilempire.com"
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -193,15 +234,14 @@ LOGGING = {
         }
     },
     'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler'
+        },
     },
     'loggers': {
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['console'],
             'level': 'ERROR',
             'propagate': True,
         },
