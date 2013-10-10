@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, InvalidPage
 
 from sorl.thumbnail import get_thumbnail
 
-from oscar.templatetags.currency_filters import currency
+from oscar.templatetags.currency_filters import render_currency
 
 from tastypie.api import Api
 from tastypie.utils import trailing_slash
@@ -77,7 +77,6 @@ class SearchableModelResource(ModelResource):
 
         self.log_throttled_access(request)
         return self.create_response(request, object_list)
-
 
 
 class CommunicationEventTypeResource(ModelResource):
@@ -208,7 +207,7 @@ class OrderResource(SearchableModelResource):
             bundle.obj.number,
             bundle.obj.email,
             bundle.obj.date_placed.strftime('%Y-%m-%d %H:%M'),
-            currency(bundle.obj.total_incl_tax),
+            render_currency(bundle.obj.total_incl_tax),
         )
 
         bundle.data['label'] = order_label
@@ -276,7 +275,7 @@ class LineResource(SearchableModelResource):
             bundle.obj.order.number,
             bundle.obj.order.email,
             bundle.obj.order.date_placed.strftime('%Y-%m-%d %H:%M'),
-            currency(bundle.obj.order.total_incl_tax),
+            render_currency(bundle.obj.order.total_incl_tax),
         )
 
         bundle.data['label'] = line_label

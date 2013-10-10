@@ -3,7 +3,7 @@ from django.conf import settings
 from django.db.models import get_model
 from django.utils.translation import ugettext_lazy as _
 
-from oscar.templatetags.currency_filters import currency
+from oscar.templatetags.currency_filters import render_currency
 
 from ticketing import defaults
 
@@ -40,7 +40,7 @@ class TicketCreateForm(forms.ModelForm):
         for order in Order.objects.filter(user=self.user).order_by('date_placed'):
             label = _("Order #%s for %s") % (
                 order.number,
-                currency(order.total_incl_tax)
+                render_currency(order.total_incl_tax)
             )
             order_choices.append((order.id, label))
 
