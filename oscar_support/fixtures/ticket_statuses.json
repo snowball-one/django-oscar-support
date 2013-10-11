@@ -1,0 +1,37 @@
+[
+    {
+        "pk": 1, 
+        "model": "oscar_support.ticketstatus", 
+        "fields": {
+            "name": "New"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "oscar_support.ticketstatus", 
+        "fields": {
+            "name": "Open"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "oscar_support.ticketstatus", 
+        "fields": {
+            "name": "Solved"
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "oscar_support.ticketstatus", 
+        "fields": {
+            "name": "Pending"
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "oscar_support.ticketstatus", 
+        "fields": {
+            "name": "Resolved"
+        }
+    }
+]

@@ -1,49 +1,49 @@
 [
     {
         "pk": 1, 
-        "model": "ticketing.tickettype", 
+        "model": "oscar_support.tickettype", 
         "fields": {
             "name": "Question"
         }
     }, 
     {
         "pk": 2, 
-        "model": "ticketing.tickettype", 
+        "model": "oscar_support.tickettype", 
         "fields": {
             "name": "Ransom"
         }
     }, 
     {
         "pk": 1, 
-        "model": "ticketing.ticketstatus", 
+        "model": "oscar_support.ticketstatus", 
         "fields": {
             "name": "New"
         }
     }, 
     {
         "pk": 3, 
-        "model": "ticketing.ticketstatus", 
+        "model": "oscar_support.ticketstatus", 
         "fields": {
             "name": "Open"
         }
     }, 
     {
         "pk": 4, 
-        "model": "ticketing.ticketstatus", 
+        "model": "oscar_support.ticketstatus", 
         "fields": {
             "name": "Solved"
         }
     }, 
     {
         "pk": 5, 
-        "model": "ticketing.ticketstatus", 
+        "model": "oscar_support.ticketstatus", 
         "fields": {
             "name": "Pending"
         }
     }, 
     {
         "pk": 1, 
-        "model": "ticketing.ticket", 
+        "model": "oscar_support.ticket", 
         "fields": {
             "status": 1, 
             "body": "I want 2 Million dollars by Friday or I stop working on the issue tracker!", 
@@ -62,7 +62,7 @@
     }, 
     {
         "pk": 3, 
-        "model": "ticketing.basemessage", 
+        "model": "oscar_support.basemessage", 
         "fields": {
             "text": "I'll got get the money then, I guess!", 
             "ticket": 1, 
@@ -72,7 +72,7 @@
     }, 
     {
         "pk": 2, 
-        "model": "ticketing.basemessage", 
+        "model": "oscar_support.basemessage", 
         "fields": {
             "text": "Oh, and don't even try to call the Police or I'll cut you!!!!!", 
             "ticket": 1, 
@@ -82,7 +82,7 @@
     }, 
     {
         "pk": 1, 
-        "model": "ticketing.basemessage", 
+        "model": "oscar_support.basemessage", 
         "fields": {
             "text": "I think I should call the Police", 
             "ticket": 1, 
@@ -92,17 +92,17 @@
     }, 
     {
         "pk": 3, 
-        "model": "ticketing.message", 
+        "model": "oscar_support.message", 
         "fields": {}
     }, 
     {
         "pk": 2, 
-        "model": "ticketing.message", 
+        "model": "oscar_support.message", 
         "fields": {}
     }, 
     {
         "pk": 1, 
-        "model": "ticketing.note", 
+        "model": "oscar_support.note", 
         "fields": {}
     }
 ]

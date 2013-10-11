@@ -1,0 +1,16 @@
+[
+    {
+        "pk": 1,
+        "model": "oscar_support.tickettype",
+        "fields": {
+            "name": "Question about a product"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "oscar_support.tickettype",
+        "fields": {
+            "name": "Where is my order?"
+        }
+    }
+]

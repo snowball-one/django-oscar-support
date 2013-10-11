@@ -141,7 +141,7 @@ INSTALLED_APPS = [
     'south',
     'compressor',
 
-    'ticketing',
+    'oscar_support',
 ]
 
 from oscar import get_core_apps
@@ -165,13 +165,13 @@ from oscar.defaults import *
 
 OSCAR_ALLOW_ANON_CHECKOUT = True
 
-OSCAR_SHOP_NAME = "Ticketing"
+OSCAR_SHOP_NAME = "Oscar Support"
 OSCAR_SHOP_TAGLINE = "Make your customers happy!"
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 ##### TICKETING SETTINGS #####
-from ticketing.defaults import *
+from oscar_support.defaults import *
 
 OSCAR_DASHBOARD_NAVIGATION = OSCAR_DASHBOARD_NAVIGATION + [
     {
@@ -180,7 +180,7 @@ OSCAR_DASHBOARD_NAVIGATION = OSCAR_DASHBOARD_NAVIGATION + [
         'children': [
             {
                 'label': "Overview",
-                'url_name': 'ticketing-dashboard:ticket-list',
+                'url_name': 'support-dashboard:ticket-list',
             }
 
         ],

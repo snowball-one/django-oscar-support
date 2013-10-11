@@ -2,13 +2,13 @@ import random
 
 from django.db.models import get_model
 
-from ticketing.utils import TicketNumberGenerator
+from oscar_support.utils import TicketNumberGenerator
 
 
 User = get_model('auth', 'User')
-Ticket = get_model('ticketing', 'Ticket')
-TicketType = get_model('ticketing', 'TicketType')
-TicketStatus = get_model('ticketing', 'TicketStatus')
+Ticket = get_model('oscar_support', 'Ticket')
+TicketType = get_model('oscar_support', 'TicketType')
+TicketStatus = get_model('oscar_support', 'TicketStatus')
 
 
 # Ticket statuses for testing

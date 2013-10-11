@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from oscar_testsupport.testcases import WebTestCase
 from oscar_testsupport.factories import create_order
 
-from ticketing.models import Ticket, TicketStatus, TicketType
+from oscar_support.models import Ticket, TicketStatus, TicketType
 
 
 class TestACustomer(WebTestCase):
@@ -18,7 +18,7 @@ class TestACustomer(WebTestCase):
         self.message_text = "this is a new message text"
 
     def test_can_create_a_new_ticket(self):
-        page = self.get(reverse('ticketing:customer-ticket-create'))
+        page = self.get(reverse('support:customer-ticket-create'))
 
         ticket_form = page.forms['create-ticket-form']
         ticket_form['type'] = self.type.id
@@ -40,7 +40,7 @@ class TestACustomer(WebTestCase):
 
     def test_can_create_a_ticket_with_related_order(self):
         order = create_order(user=self.user)
-        page = self.get(reverse('ticketing:customer-ticket-create'))
+        page = self.get(reverse('support:customer-ticket-create'))
 
         ticket_form = page.forms['create-ticket-form']
         ticket_form['type'] = self.type.id
@@ -73,7 +73,7 @@ class TestACustomer(WebTestCase):
         )
         self.assertEquals(ticket.messages.count(), 0)
 
-        page = self.get(reverse('ticketing:customer-ticket-update',
+        page = self.get(reverse('support:customer-ticket-update',
                                 args=(ticket.id,)))
         self.assertContains(page, ticket.body)
 

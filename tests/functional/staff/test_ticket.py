@@ -6,12 +6,12 @@ from oscar_testsupport.testcases import WebTestCase
 
 User = get_model('auth', 'User')
 Group = get_model('auth', 'Group')
-Ticket = get_model('ticketing', 'Ticket')
-TicketType = get_model('ticketing', 'TicketType')
-TicketStatus = get_model('ticketing', 'TicketStatus')
+Ticket = get_model('oscar_support', 'Ticket')
+TicketType = get_model('oscar_support', 'TicketType')
+TicketStatus = get_model('oscar_support', 'TicketStatus')
 
-Message = get_model('ticketing', 'Message')
-Note = get_model('ticketing', 'Note')
+Message = get_model('oscar_support', 'Message')
+Note = get_model('oscar_support', 'Note')
 
 
 class TestAStaffMember(WebTestCase):
@@ -39,7 +39,7 @@ class TestAStaffMember(WebTestCase):
         self.hidden_ticket = helpers.create_ticket(
             assigned_group=self.reject_group)
 
-        page = self.get(reverse('ticketing-dashboard:ticket-list'))
+        page = self.get(reverse('support-dashboard:ticket-list'))
         ticket_list = page.context[0]['ticket_list']
 
         self.assertEquals(len(ticket_list), 1)
@@ -54,7 +54,7 @@ class TestAStaffMember(WebTestCase):
                                             password="somepassword")
         question_type = TicketType.objects.get(name="Question")
 
-        page = self.get(reverse('ticketing-dashboard:ticket-create'))
+        page = self.get(reverse('support-dashboard:ticket-create'))
         ticket_form = page.forms['ticket-create-form']
         ticket_form['requester'] = customer.id
         ticket_form['type'] = question_type.id
@@ -75,7 +75,7 @@ class TestAStaffMember(WebTestCase):
         question_type = TicketType.objects.get(name="Question")
         status = TicketStatus.objects.get(name="Open")
 
-        page = self.get(reverse('ticketing-dashboard:ticket-create'))
+        page = self.get(reverse('support-dashboard:ticket-create'))
         ticket_form = page.forms['ticket-create-form']
         ticket_form['requester'] = customer.id
         ticket_form['status'] = status.id
@@ -116,7 +116,7 @@ class TestATicket(WebTestCase):
         reply = Message.objects.create(user=self.customer, ticket=self.ticket,
                                        text="I am the customer and shout at you.")
 
-        page = self.get(reverse('ticketing-dashboard:ticket-update',
+        page = self.get(reverse('support-dashboard:ticket-update',
                                 args=(self.ticket.id,)))
         self.assertContains(page, self.ticket.printable_number)
         self.assertContains(page, note.text)
@@ -125,7 +125,7 @@ class TestATicket(WebTestCase):
 
     def test_can_be_updated_with_an_internal_note(self):
         message_text = "I am adding an internal message"
-        page = self.get(reverse('ticketing-dashboard:ticket-update',
+        page = self.get(reverse('support-dashboard:ticket-update',
                                 args=(self.ticket.id,)))
 
         update_form = page.forms['ticket-update-form']
@@ -133,7 +133,7 @@ class TestATicket(WebTestCase):
         update_form['message_type'] = "note"
         page = update_form.submit()
 
-        self.assertRedirects(page, reverse('ticketing-dashboard:ticket-list'))
+        self.assertRedirects(page, reverse('support-dashboard:ticket-list'))
         self.assertEquals(self.ticket.messages.count(), 1)
 
         message = self.ticket.messages.select_subclasses()[0]
@@ -143,14 +143,14 @@ class TestATicket(WebTestCase):
 
     def test_can_be_updated_with_a_public_response(self):
         message_text = "I am adding a public message or reply"
-        page = self.get(reverse('ticketing-dashboard:ticket-update',
+        page = self.get(reverse('support-dashboard:ticket-update',
                                 args=(self.ticket.id,)))
 
         update_form = page.forms['ticket-update-form']
         update_form['message_text'] = message_text
         page = update_form.submit()
 
-        self.assertRedirects(page, reverse('ticketing-dashboard:ticket-list'))
+        self.assertRedirects(page, reverse('support-dashboard:ticket-list'))
         self.assertEquals(self.ticket.messages.count(), 1)
 
         message = self.ticket.messages.select_subclasses()[0]

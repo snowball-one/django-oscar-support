@@ -1,0 +1,147 @@
+{% extends 'oscar_support/dashboard/layout.html' %}
+{% load currency_filters %}
+{% load ticket_tags %}
+{% load i18n %}
+{% load url from future %}
+
+{% block body_class %}support home{% endblock %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">  	
+    <li>
+        <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active">{% trans "Support tickets" %}</li>
+</ul>
+{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h1>{% trans "Support tickets" %}</h1>
+</div>
+{% endblock %}
+
+{% block dashboard_content %}
+<form id="ticket-update-form" data-ticket-id="{{ selected_ticket.id }}" method="post" action="." class="form-inline wysiwyg">
+    {% csrf_token %}
+    <div class='row-fluid'>
+        <aside class="span3">
+            <div class="table-header">
+                <i class="icon-comments icon-large"></i>{% trans "Tickets" %}
+                <a href="{% url 'support-dashboard:ticket-create' %}" class="btn btn-primary pull-right">
+                    <i class="icon-plus"></i> {% trans "Create new ticket" %}
+                </a>
+            </div>
+            <div class="ticket-list">
+                {% for ticket in ticket_list %}
+                <div class="well {% if ticket.id == selected_ticket.id %}active{% endif %}">
+                    <a href="{% url 'support-dashboard:ticket-update' ticket.id %}" class="btn {% if ticket.id == selected_ticket.id %}btn-primary{% endif %} pull-right">Select</a>
+                    <p>
+                        {% blocktrans with number=ticket.printable_number subject=ticket.subject|truncatechars:30 %}
+                        <strong>Ticket #{{ number }}:</strong> {{ subject }}</br>
+                        {% endblocktrans %}
+                        <strong>{% trans "Last modified:" %}</strong> {{ ticket.date_updated|date:"jS M Y H:i" }}<br/>
+                        <strong>Status:</strong> <span class="label">{{ ticket.status.name }}</span> <span class="label">{{ ticket.type.name }}</span>
+                    </p>   
+                </div>
+                {% endfor %}
+            </div>
+        </aside>
+
+        <div class="span9">
+            <div class="table-header">
+                <i class="icon-edit icon-large"></i>{% trans "View and Edit Tickets" %}
+            </div>
+            <div class="content-block">
+                {% if selected_ticket %}
+                <div class="well">
+                    <div class="row-fluid">
+                        <div class="span7">
+                            <p><strong>{% trans "Last updated:" %}</strong> {{ selected_ticket.date_updated|date:"jS M Y H:i" }} <br/>
+                                <strong>{% trans "Status:" %}</strong> <span class="label">{{ selected_ticket.status.name }}</span> <span class="label">{{ selected_ticket.type.name }}</span>
+                            </p>
+                            <h4><strong>{% trans "#" %}{{ selected_ticket.printable_number }}: {{ selected_ticket.subject|truncatechars:30 }}</strong></h4>
+                            {% with requester=selected_ticket.requester %}
+                                <h3><strong>{% trans "From:" %}</strong> {{ requester.get_full_name|default:requester.email }}</h3>
+                            {% endwith %}
+                        </div>
+                        <div class="span5">
+                            <div class="form-assigned form-horizontal pull-right">
+                                {% for field in form.get_property_fields %}
+                                    {% include "oscar_support/partials/form_fields_horizontal.html" %}
+                                {% endfor %}
+                            </div>    
+                        </div>
+                    </div>
+                </div>
+                
+                {% if selected_ticket.relatedorders.all|length %}
+                <hr/>
+                {% include "oscar_support/dashboard/partials/related_orders.html" with ticket=selected_ticket %}
+                {% endif %}
+
+                {% if selected_ticket.relatedlines.all|length %}
+                <hr/>
+                {% include "oscar_support/dashboard/partials/related_lines.html" with ticket=selected_ticket %}
+                {% endif %}
+
+                {% if selected_ticket.relatedproducts.all|length %}
+                <hr/>
+                {% include "oscar_support/dashboard/partials/related_products.html" with ticket=selected_ticket %}
+                {% endif %}
+
+                <hr/>
+                <div class="ticket-message">
+                    {% for field in form.get_message_fields %}
+                    {% if field.is_hidden %}
+                    {{ field }}
+                    {% else %}
+                    <div class="control-group {% if field.errors %}error{% endif %}">
+                        {{ field }}
+                        {% for error in field.errors %}
+                        <ul class="help-block">
+                            <li>{{ error }}</li>
+                        </ul>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class="ticket-list ticket-messages">
+                    {% get_messages selected_ticket as selected_ticket_messages %}
+                    {% for msg in selected_ticket_messages %}
+                     <div class="well {% if msg.is_internal %}internal-message{% endif %}">
+                        <p><strong>{% if msg.is_internal %}{% trans "Internal Nate from:" %}{% else %}{% trans "From:" %}{% endif %}</strong> {{ msg.user.get_fullname|default:msg.user.email }}, {{ msg.date_created|date:"jS M Y H:i" }}</p>
+                        {{ msg.text|safe }}
+                    </div>
+                    {% endfor %}
+
+                    <div class="well">
+                        <p><strong>From:</strong> {{ selected_ticket.requester.get_fullname|default:selected_ticket.requester.email }}, {{ selected_ticket.date_created|date:"jS M Y H:i" }}</p>
+                       {{ selected_ticket.body|safe }}
+                    </div>
+                </div>
+
+
+           
+                <div class="form-actions">
+                    <a href="{% url 'support-dashboard:ticket-list' %}" class="btn pull-left">{% trans "cancel" %}</a>
+                    <div class="pull-right">
+                        {% include "oscar_support/dashboard/partials/save_with_status.html" with ticket=selected_ticket %}
+                    </div>
+                </div>
+
+                {% else %}
+                <div class="well well-blank">
+                    <p>Click on an individual ticket on the left to view or edit it. If you want to update or merge multiple tickets, select more than one.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</form>
+
+{% endblock %}

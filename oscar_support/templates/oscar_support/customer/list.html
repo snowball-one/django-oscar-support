@@ -1,0 +1,73 @@
+{% extends "oscar/customer/profile/profile.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block title %}
+{% trans 'Your tickets' %} | {{ block.super }}
+{% endblock %}
+
+{% block body_class %}account-pages{% endblock %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+    <li>
+        <a href="{% url 'promotions:home' %}">{% trans 'Home' %}</a>
+        <span class="divider">/</span>
+    </li>
+    <li>
+        <a href="{% url 'customer:summary' %}">{% trans 'Account' %}</a>
+        <span class="divider">/</span>
+    </li>
+	<li class="active">{% trans 'Your tickets' %}</li>
+</ul>
+{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h2>{% trans 'Account' %}</h2>
+</div>
+{% endblock header %}
+
+{% block subnavigation %}
+    {% include "partials/nav_profile.html" with support="active" %}
+{% endblock %}
+
+{% block subheader %}
+<div class="sub-header">
+    <h2>{% trans 'Your tickets' %}</h2>
+</div>
+{% endblock subheader %}
+
+{% block content %}
+
+<div class="well">
+    <a class="btn btn-success" href="{% url 'support:customer-ticket-create' %}">
+        <i class="icon-inverse icon-plus"></i>
+        {% trans "Create new ticket" %}
+    </a>
+</div>
+
+<div class="tabbable">
+    <div class="nav-collapse">
+        <ul class="nav nav-tabs">
+            <li class="active">
+                <a href="#open" data-toggle="tab">{% trans "Open" %}</a>
+            </li>
+            <li>
+                <a href="#resolved" data-toggle="tab">{% trans "Resolved" %}</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="tab-content">
+        <div class="tab-pane active" id="open">
+            {% include "oscar_support/customer/partials/ticket_table.html" with ticket_list=open_ticket_list %}
+        </div>
+
+        <div class="tab-pane" id="resolved">
+            {% include "oscar_support/customer/partials/ticket_table.html" with ticket_list=resolved_ticket_list %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+

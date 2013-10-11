@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% load i18n %}
+{% load url from future %}
+
+{% block title %}
+{% trans 'Create new ticket' %} | {{ block.super }}
+{% endblock %}
+
+{% block body_class %}account-pages{% endblock %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+    <li>
+        <a href="{% url 'promotions:home' %}">{% trans 'Home' %}</a>
+        <span class="divider">/</span>
+    </li>
+    <li>
+        <a href="{% url 'customer:summary' %}">{% trans 'Account' %}</a>
+        <span class="divider">/</span>
+    </li>
+	<li class="active">{% trans 'Create ticket' %}</li>
+</ul>
+{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <h2>{% trans 'Account' %}</h2>
+</div>
+{% endblock header %}
+
+{% block subnavigation %}
+    {% include "partials/nav_profile.html" with support="active" %}
+{% endblock %}
+
+{% block subheader %}
+<div class="sub-header">
+    <h2>{% trans 'Create new ticket' %}</h2>
+</div>
+{% endblock subheader %}
+
+{% block content %}
+<form id="create-ticket-form" action="." method="post" class="form">
+    {% csrf_token %}
+
+    {% include "partials/form_fields.html" %}
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{% trans "Create ticket" %}</button>
+        {% trans "or" %}
+        <a href="{% url 'support:customer-ticket-list' %}">{% trans "cancel" %}</a>
+    </div>
+</form>
+
+<hr />
+
+{% endblock content %}

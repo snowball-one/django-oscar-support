@@ -6,16 +6,15 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from oscar.app import shop
 
-import ticketing.urls
+import oscar_support.urls
 
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^', include(shop.urls)),
-
-    url(r'^', include(ticketing.urls)),
-
+    url(r'^', include(oscar_support.urls)),
     url(r'^admin/', include(admin.site.urls)),
 )
 

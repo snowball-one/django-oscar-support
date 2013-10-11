@@ -1,0 +1,18 @@
+{% extends "dashboard/layout.html" %}
+{% load staticfiles %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static "oscar_support/css/support.css" %}" type="text/css" media="screen" title="no title" charset="utf-8">
+{% endblock %}
+
+{% block extrascripts %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static "oscar_support/js/dashboard.js" %}"></script>
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    support.dashboard.init();
+{% endblock %}
+
