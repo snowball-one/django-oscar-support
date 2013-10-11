@@ -35,15 +35,14 @@ class TicketCreateForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super(TicketCreateForm, self).__init__(*args, **kwargs)
         self.user = user
-
         order_choices = [(0, _('Not related to an order'))]
-        for order in Order.objects.filter(user=self.user).order_by('date_placed'):
+        orders = Order.objects.filter(user=self.user).order_by('date_placed')
+        for order in orders:
             label = _("Order #%s for %s") % (
                 order.number,
                 render_currency(order.total_incl_tax)
             )
             order_choices.append((order.id, label))
-
         self.fields['order'].choices = order_choices
 
     def save(self, commit=True):
@@ -66,8 +65,11 @@ class TicketCreateForm(forms.ModelForm):
                 pass
             else:
                 instance.save()
-                RelatedOrder.objects.create(ticket=instance, order=order)
-
+                RelatedOrder.objects.create(
+                    ticket=instance,
+                    order=order,
+                    user=self.user,
+                )
         return instance
 
     class Meta:

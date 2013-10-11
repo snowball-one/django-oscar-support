@@ -3,11 +3,13 @@
 *.sqlite3
 *.db
 *.egg-info
+*.dot
 
 .vagrant
 .coverage
 
 .tox/
 cover/
+htmlcov/
 docs/_build/
 sandbox/public/

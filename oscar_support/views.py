@@ -62,18 +62,19 @@ class TicketUpdateView(generic.UpdateView):
     template_name = 'oscar_support/customer/ticket_update.html'
 
     def form_valid(self, form):
-        message_text = form.cleaned_data['message_text']
-
+        message_text = form.cleaned_data.get('message_text')
+        if not message_text:
+            return self.form_invalid(form)
         Message.objects.create(
             ticket=self.object,
             text=message_text,
             user=self.request.user,
         )
-
         return HttpResponseRedirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
         ctx = super(TicketUpdateView, self).get_context_data(**kwargs)
+        print "CONTEXT", ctx
         ctx['message_list'] = Message.objects.filter(
             user=self.request.user,
             ticket=self.object,
@@ -81,5 +82,7 @@ class TicketUpdateView(generic.UpdateView):
         return ctx
 
     def get_success_url(self):
-        return reverse("support:customer-ticket-update",
-                       args=(self.object.id,))
+        return reverse(
+            "support:customer-ticket-update",
+            kwargs={'pk': self.object.uuid}
+        )

@@ -52,28 +52,37 @@ class TicketListView(TicketListMixin, generic.ListView):
         return self.get_ticket_list()
 
 
-class RelatedProductInline(InlineFormSet):
+class UserFormInlineMixin(object):
+
+    def get_extra_form_kwargs(self):
+        kwargs = super(RelatedOrderLineInline, self).get_extra_form_kwargs()
+        kwargs['user'] = self.request.user
+        print 'ADD USER TO FORM', kwargs
+        return kwargs
+
+
+class RelatedProductInline(UserFormInlineMixin, InlineFormSet):
     model = get_model('oscar_support', 'RelatedProduct')
     form_class = forms.RelatedProductForm
     extra = 1
     max_num = 1
 
 
-class RelatedOrderInline(InlineFormSet):
+class RelatedOrderInline(UserFormInlineMixin, InlineFormSet):
     model = get_model('oscar_support', 'RelatedOrder')
     form_class = forms.RelatedOrderForm
     extra = 1
     max_num = 1
 
 
-class RelatedLineInline(InlineFormSet):
-    model = get_model('oscar_support', 'RelatedLine')
-    form_class = forms.RelatedLineForm
+class RelatedOrderLineInline(UserFormInlineMixin, InlineFormSet):
+    model = get_model('oscar_support', 'RelatedOrderLine')
+    form_class = forms.RelatedOrderLineForm
     extra = 1
 
 
-class RelatedFileInline(InlineFormSet):
-    model = get_model('oscar_support', 'RelatedFile')
+class AttachmentInline(InlineFormSet):
+    model = get_model('oscar_support', 'Attachment')
     extra = 3
 
 
@@ -83,7 +92,7 @@ class TicketCreateView(CreateWithInlinesView):
     default_status = None
     form_class = forms.TicketCreateForm
     inlines = [RelatedProductInline, RelatedOrderInline,
-               RelatedLineInline, RelatedFileInline]
+               RelatedOrderLineInline, AttachmentInline]
 
     def forms_valid(self, form, inlines):
         self.object = form.save(commit=False)
@@ -133,18 +142,14 @@ class TicketUpdateView(TicketListMixin, generic.UpdateView):
 
     def form_valid(self, form):
         ticket = form.save()
-
-        message_type = form.cleaned_data.get('message_type', None)
-        message_text = form.cleaned_data.get('message_text', None)
-
-        if message_type and message_text:
-            message_model = self.default_message_model
-            if message_type == 'note':
-                message_model = Note
-
-            message_model.objects.create(user=self.request.user,
-                                         text=message_text, ticket=ticket)
-
+        message_type = form.cleaned_data.get('message_type', Message.PUBLIC)
+        message_text = form.cleaned_data.get('message_text')
+        Message.objects.create(
+            user=self.request.user,
+            type=message_type,
+            text=message_text,
+            ticket=ticket
+        )
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):

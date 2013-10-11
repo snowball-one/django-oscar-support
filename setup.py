@@ -1,37 +1,40 @@
 #!/usr/bin/env python
 import os
+
 from setuptools import setup, find_packages
 
+from oscar_support import get_version
+
+
+def location(path):
+    return os.path.join(os.path.dirname(__file__))
+
+
 setup(
-    name='django-oscar-ticketing',
-    version=":versiontools:ticketing:",
-    url='https://github.com/tangentlabs/django-oscar-ticketing',
+    name='django-oscar-support',
+    version=get_version(),
+    url='https://github.com/tangentlabs/django-oscar-support',
     author="Sebastian Vetter",
     author_email="sebastian.vetter@tangentsnowball.com.au",
     description="Ticketing and customer support for Oscar",
-    long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
-    keywords="django, oscar, e-commerce",
+    long_description=open(location('README.rst')).read(),
+    keywords="django, oscar, e-commerce, customer support, issue tracking",
     license='BSD',
     platforms=['linux'],
     packages=find_packages(exclude=["sandbox*", "tests*"]),
     include_package_data=True,
     install_requires=[
-        'Django>=1.4.2',
-        'versiontools>=1.1.9',
-        #'django-oscar>=0.6',
-        'django-model-utils>=1.1.0',
+        'django-shortuuidfield',
+        'Django>=1.4',
+        'django-oscar',
+        'django-extensions',
         'django-extra-views>=0.5.2',
-        'django-tastypie>=0.9.11',
-    ],
-    # See http://pypi.python.org/pypi?%3Aaction=list_classifiers
-    dependency_links = [
-        'https://github.com/tangentlabs/django-oscar/tarball/master#egg=django-oscar-0.6',
     ],
     classifiers=[
-      'Environment :: Web Environment',
-      'Intended Audience :: Developers',
-      'License :: OSI Approved :: BSD License',
-      'Operating System :: Unix',
-      'Programming Language :: Python'
+        'Environment :: Web Environment',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: Unix',
+        'Programming Language :: Python'
     ]
 )

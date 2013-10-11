@@ -4,6 +4,7 @@ from django.db.models import get_model
 
 from oscar_support import defaults
 
+Message = get_model('oscar_support', 'Message')
 TicketStatus = get_model('oscar_support', 'TicketStatus')
 
 register = template.Library()
@@ -20,11 +21,9 @@ def get_messages(context, ticket, num_messages=None):
     user = context.get('user', None)
     if not user:
         return []
-
     if not user.is_staff:
-        return get_model('oscar_support', 'Message').objects.filter(ticket=ticket)
-
-    return ticket.messages.select_subclasses()
+        return Message.objects.filter(ticket=ticket, type=Message.PUBLIC)
+    return ticket.messages.all()
 
 
 @register.assignment_tag

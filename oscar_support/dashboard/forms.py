@@ -6,6 +6,7 @@ from ..forms.fields import AutoCompleteField
 from ..forms.widgets import CustomRadioFieldRenderer
 
 User = get_model('auth', 'User')
+Message = get_model('oscar_support', 'Message')
 CommunicationEventType = get_model('customer', 'CommunicationEventType')
 
 
@@ -29,8 +30,8 @@ class TicketCreateForm(forms.ModelForm):
 
     def get_property_fields(self):
         for field in self:
-            if field.name not in ['body', 'subject'] \
-               and not field.name.startswith('requester') :
+            if (field.name not in ['body', 'subject']
+               and not field.name.startswith('requester')):
                 yield field
 
     class Meta:
@@ -43,20 +44,17 @@ class TicketCreateForm(forms.ModelForm):
 
 
 class TicketUpdateForm(forms.ModelForm):
-    MESSAGE_CHOICES = (
-        ('message', _("Public reply")),
-        ('note', _("Internal note")),
-    )
     message_type = forms.ChoiceField(
         widget=forms.RadioSelect(renderer=CustomRadioFieldRenderer),
-        choices=MESSAGE_CHOICES,
+        choices=Message.MESSAGE_TYPES,
         label=_("Message type"),
-        initial='message',
+        initial=Message.PUBLIC,
+    )
+    message_text = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 5}),
+        label=_("Message text"),
         required=False
     )
-    message_text = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}),
-                                   label=_("Message text"), required=False)
-
     message_template = forms.ChoiceField(label=_("Template"), required=False)
 
     def __init__(self, *args, **kwargs):
@@ -80,8 +78,7 @@ class TicketUpdateForm(forms.ModelForm):
 
     class Meta:
         model = get_model('oscar_support', 'Ticket')
-        exclude = ['number', 'subticket_number', 'parent', 'body', 'subject',
-                   'date_created', 'date_updated', 'requester', 'is_internal']
+        fields = ['status', 'message_type', 'message_text']
         widgets = {
             'status': forms.HiddenInput(),
         }
@@ -107,6 +104,16 @@ class RelatedOrderForm(forms.ModelForm):
         model = get_model('oscar_support', 'RelatedOrder')
 
 
+class RelatedOrderLineForm(forms.ModelForm):
+    line = AutoCompleteField(
+        model=get_model('order', 'Line'),
+        url='/api/v1/line/search/'
+    )
+
+    class Meta:
+        model = get_model('oscar_support', 'RelatedOrderLine')
+
+
 class RelatedProductForm(forms.ModelForm):
     product = AutoCompleteField(
         model=get_model('catalogue', 'Product'),
@@ -114,14 +121,4 @@ class RelatedProductForm(forms.ModelForm):
     )
 
     class Meta:
-        model = get_model('oscar_support', 'RelatedOrder')
-
-
-class RelatedLineForm(forms.ModelForm):
-    line = AutoCompleteField(
-        model=get_model('order', 'Line'),
-        url='/api/v1/line/search/'
-    )
-
-    class Meta:
-        model = get_model('oscar_support', 'RelatedOrder')
+        model = get_model('oscar_support', 'RelatedProduct')

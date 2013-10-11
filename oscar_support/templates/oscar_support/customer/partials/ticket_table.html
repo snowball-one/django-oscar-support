@@ -19,7 +19,7 @@
             <td>{{ ticket.date_updated|date:"jS M Y H:i" }}</td>
             <td>{{ ticket.assignee.get_full_name|default:"-" }}</td>
             <td>
-                <a href="{% url 'support:customer-ticket-update' ticket.id %}" class="btn">{% trans "Update" %}</a>
+                <a href="{% url 'support:customer-ticket-update' ticket.uuid %}" class="btn">{% trans "Update" %}</a>
             </td>
         </tr>
         {% endfor %}

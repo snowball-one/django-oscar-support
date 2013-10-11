@@ -8,14 +8,14 @@ class TicketNumberGenerator(object):
         return {
             # we don't want the ticket number to start at zero
             'number': get_model('oscar_support', 'Ticket').objects.count() + 1,
-            'subticket_number': 0,
+            'subticket_id': 0,
         }
 
     @classmethod
-    def generate_subticket_number(cls, ticket):
+    def generate_subticket_id(cls, ticket):
         return {
             'number': ticket.number,
-            'subticket_number': ticket.subtickets.count(),
+            'subticket_id': ticket.subtickets.count(),
         }
 
 

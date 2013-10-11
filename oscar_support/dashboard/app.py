@@ -1,5 +1,7 @@
 from django.conf.urls.defaults import patterns, url
 
+from shortuuid import get_alphabet
+
 from oscar.core.application import Application
 from oscar.views.decorators import staff_member_required
 
@@ -20,7 +22,7 @@ class SupportDashboardApplication(Application):
             url(r'^ticket/create/$', self.ticket_create_view.as_view(),
                 name='ticket-create'),
             url(
-                r'^ticket/update/(?P<pk>\d+)/$',
+                r'^ticket/update/(?P<pk>[{0}]+)/$'.format(get_alphabet()),
                 self.ticket_update_view.as_view(),
                 name='ticket-update'
             ),

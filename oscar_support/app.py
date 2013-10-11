@@ -1,6 +1,8 @@
 from django.conf.urls.defaults import patterns, url
 from django.contrib.auth.decorators import login_required
 
+from shortuuid import get_alphabet
+
 from oscar.core.application import Application
 
 from . import views
@@ -16,7 +18,8 @@ class SupportApplication(Application):
     def get_urls(self):
         urlpatterns = super(SupportApplication, self).get_urls()
 
-        urlpatterns += patterns('',
+        urlpatterns += patterns(
+            '',
             url(
                 r'accounts/support/$',
                 self.ticket_list_view.as_view(),
@@ -28,7 +31,9 @@ class SupportApplication(Application):
                 name='customer-ticket-create'
             ),
             url(
-                r'accounts/support/ticket/(?P<pk>\d+)/update/$',
+                r'accounts/support/ticket/(?P<pk>[{0}]+)/update/$'.format(
+                    get_alphabet()
+                ),
                 self.ticket_update_view.as_view(),
                 name='customer-ticket-update'
             ),
