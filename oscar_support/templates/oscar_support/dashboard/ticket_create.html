@@ -11,7 +11,7 @@
 {% block body_class %}create-page support new-ticket{% endblock %}
 
 {% block breadcrumbs %}
-<ul class="breadcrumb">  	
+<ul class="breadcrumb">
     <li>
         <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
         <span class="divider">/</span>
@@ -27,94 +27,53 @@
 {% endblock %}
 
 {% block dashboard_content %}
-<form id="ticket-create-form" method="post" action=".">
+<form class="form" id="ticket-create-form" method="post" action=".">
     {% csrf_token %}
-    
-    <div class="row-fluid">
-        <div class="span3">
-            <div data-spy="affix" class="affix-top" data-offset-top="200">
-                <div class="table-header">
-                    <h3>{% trans "Sections" %}</h3>
-                </div>
-                <ul class="nav nav-list bs-docs-sidenav" id="ticket_create_tabs">
-                    <li class="active"><a href="#new_ticket" data-toggle="tab">New ticket</a></li>
-                    <li><a href="#related_product" data-toggle="tab">Related product</a></li>
-                    <li><a href="#related_order" data-toggle="tab">Related order</a></li>
-                    <li><a href="#related_lines" data-toggle="tab">Related lines</a></li>
-                    <li><a href="#related_files" data-toggle="tab">Related files</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="span9">
-            <div class="tab-content">
-                <div class="tab-pane active" id="new_ticket">
-                    <div class='table-header'>
-                        <h2><i class="icon-comments"></i>{% trans "New ticket" %}</h2>
-                    </div>
-                    <div class="page-content well">
-                        {% for field in form.get_requester_fields %}
-                            {% include "oscar/partials/form_field.html" %}
-                        {% endfor %}
-                        <span>
-                            {% blocktrans %}
-                                Enter an existing user or
-                                <a href="#requester-create-form-modal" data-toggle="modal">add a new user</a>.
-                            {% endblocktrans %}
-                        </span>
 
-                        {% for field in form.get_property_fields %}
-                            {% include "oscar/partials/form_field.html" %}
-                        {% endfor %}
-           
-                        {% for field in form.get_message_fields %}
-                            {% include "oscar/partials/form_field.html" %}
-                        {% endfor %}
-                    </div>
+    <div class="row-fluid">
+        <div class="span9">
+            <div class='table-header'>
+                <h2><i class="icon-comments"></i>{% trans "New ticket" %}</h2>
+            </div>
+
+            <div class="page-content well">
+                <div class="well">
+                    {% include "oscar_support/partials/form_field.html" with field=form.requester %}
+                    <span>
+                        {% blocktrans %}
+                            Enter an existing user or
+                            <a href="#requester-create-form-modal" data-toggle="modal">add a new user</a>.
+                        {% endblocktrans %}
+                    </span>
+                    {% include "oscar_support/partials/form_field.html" with field=form.is_internal %}
                 </div>
-                <div class="tab-pane" id="related_product">
-                    <div class="table-header">
-                        <h2>{% trans "Related to a product" %}</h2>
-                    </div>
-                    <div class="page-content well">
-                        <div class='row-fluid'>
-                            {% include "oscar_support/dashboard/partials/inline_form.html" with formset=inlines.0 %}
-                        </div>
-                    </div>
+
+                <div class="well">
+                    {% for field in form.get_property_fields %}
+                        {% include "oscar_support/partials/form_field.html" %}
+                    {% endfor %}
                 </div>
-                <div class="tab-pane" id="related_order">
-                    <div class="table-header">
-                        <h2>{% trans "Related to an order" %}</h2>
-                    </div>
-                    <div class="page-content well">
-                        <div class='row-fluid'>
-                            {% include "oscar_support/dashboard/partials/inline_form.html" with formset=inlines.1 %}
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane" id="related_lines">
-                    <div class="table-header">
-                        <h2>{% trans "Related to lines" %}</h2>
-                    </div>
-                    <div class="page-content well">
-                        <div class='row-fluid'>
-                            {% include "oscar_support/dashboard/partials/inline_form.html" with formset=inlines.2 %}
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane" id="related_files">
-                    <div class="table-header">
-                        <h2>{% trans "Related to files" %}</h2>
-                    </div>
-                    <div class="page-content well">
-                        <div class='row-fluid'>
-                            {% include "oscar_support/dashboard/partials/inline_form.html" with formset=inlines.3 %}
-                        </div>
-                    </div>
+
+                <div class="well">
+                {% for field in form.get_message_fields %}
+                    {% include "oscar_support/partials/form_field.html" %}
+                {% endfor %}
                 </div>
             </div>
         </div>
+
+        <div class="span3">
+            <div class="table-header">
+                <h3>{% trans "Ticket details" %}</h3>
+            </div>
+            <div class="page-content well">
+                <span style="color: red;">
+                    <strong>TODO:</strong> The related data goes here.
+                </span>
+            </div>
+        </div>
+
     </div>
-    
     <div class="fixed-actions-group">
         <div class="form-actions">
             <div class="pull-right">
@@ -127,7 +86,7 @@
 
 <div id="requester-create-form-modal" class="modal hide fade" tabindex="-1"
      role="dialog" aria-labelledby="requester-create-form-modal-label" aria-hidden="true">
-    <form id="create-user-form" method="post" action="{% url 'api_dispatch_list' "v1" "user" %}">
+    <form id="create-user-form" method="post" action="{% url 'support-api:customer-list' %}">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3 id="requester-create-form-modal-label">{% trans "Create new user" %}</h3>

@@ -1,4 +1,4 @@
-﻿from django.db import models
+from django.db import models
 from django.utils.timezone import now as utc_now
 from django.utils.translation import ugettext_lazy as _
 

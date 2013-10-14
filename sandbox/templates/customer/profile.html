@@ -1,9 +1,0 @@
-{% extends "oscar/customer/profile.html" %}
-{% load i18n %}
-{% load currency_filters %}
-
-{% block extra_tabs_nav %}
-    <li>
-        <a href="{% url 'ticketing:customer-ticket-list' %}">{% trans "Support" %}</a>
-    </li>
-{% endblock %}

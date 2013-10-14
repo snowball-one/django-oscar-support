@@ -1,0 +1,10 @@
+{% extends "oscar/customer/baseaccountpage.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block standard_tabs %}
+    {{ block.super }}
+    <li>
+        <a href="{% url 'support:customer-ticket-list' %}">{% trans "Support" %}</a>
+    </li>
+{% endblock %}

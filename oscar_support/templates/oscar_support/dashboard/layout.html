@@ -3,16 +3,18 @@
 
 {% block extrahead %}
     {{ block.super }}
-    <link rel="stylesheet" href="{% static "oscar_support/css/support.css" %}" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="{% static "oscar_support/lib/select2/select2.css" %}" type="text/css" charset="utf-8">
+    <link rel="stylesheet" href="{% static "oscar_support/css/support.css" %}" type="text/css" charset="utf-8">
 {% endblock %}
 
 {% block extrascripts %}
     {{ block.super }}
+    <script type="text/javascript" src="{% static "oscar_support/lib/select2/select2.min.js" %}"></script>
     <script type="text/javascript" src="{% static "oscar_support/js/dashboard.js" %}"></script>
 {% endblock %}
 
 {% block onbodyload %}
     {{ block.super }}
-    support.dashboard.init();
+    //support.dashboard.init();
 {% endblock %}
 

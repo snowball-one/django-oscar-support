@@ -15,13 +15,18 @@ class AutoCompleteWiget(Widget):
 
     def render(self, name, value, attrs=None):
         if value is None:
-            value = []
-        tmpl = loader.get_template('oscar_support/widgets/autocomplete_widget.html')
+            value = u''
+        tmpl = loader.get_template(
+            'oscar_support/widgets/autocomplete_widget.html'
+        )
         return tmpl.render(Context({
             'name': name,
             'url': self.url,
             'user_field': self.user_field,
+            'value': value,
         }))
+
+AutoCompleteWidget = AutoCompleteWiget
 
 
 class CustomRadioInput(RadioInput):
@@ -35,12 +40,10 @@ class CustomRadioInput(RadioInput):
         if 'id' in self.attrs:
             self.attrs['id'] = '%s_%s' % (self.attrs['id'], self.index)
 
-        print self.attrs['id']
         if 'id' in self.attrs:
             label_for = ' for="%s"' % self.attrs['id']
         else:
             label_for = ''
-        print label_for
 
         choice_label = conditional_escape(force_unicode(self.choice_label))
         return render_to_string(self.template_name, Context({

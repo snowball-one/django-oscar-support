@@ -1,46 +1,72 @@
 from django import forms
 from django.db.models import get_model
+from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
-from ..forms.fields import AutoCompleteField
-from ..forms.widgets import CustomRadioFieldRenderer
+from oscar.core.compat import get_user_model
 
-User = get_model('auth', 'User')
+from ..forms.widgets import AutoCompleteWidget, CustomRadioFieldRenderer
+
+User = get_user_model()
+Ticket = get_model('oscar_support', 'Ticket')
 Message = get_model('oscar_support', 'Message')
 CommunicationEventType = get_model('customer', 'CommunicationEventType')
 
 
-class TicketCreateForm(forms.ModelForm):
-    requester = AutoCompleteField(model=User, url='/api/v1/user/search/')
-    assignee = AutoCompleteField(
-        model=User,
-        url='/api/v1/agent/search/',
-        required=False
-    )
+REQUESTER_FIELDS = ['requester', 'is_internal']
+MESSAGE_FIELDS = ['subject', 'body']
 
-    def get_requester_fields(self):
-        for field in self:
-            if field.name.startswith('requester'):
-                yield field
+
+class TicketCreateForm(forms.ModelForm):
+    requester = forms.IntegerField(
+        widget=AutoCompleteWidget(
+            url=reverse_lazy('support-api:customer-list')
+        )
+    )
+    assignee = forms.IntegerField(
+        widget=AutoCompleteWidget(
+            url=reverse_lazy('support-api:agent-list'),
+        ),
+        required=False,
+    )
 
     def get_message_fields(self):
         for field in self:
-            if field.name in ['body', 'subject']:
+            if field.name in MESSAGE_FIELDS:
                 yield field
 
     def get_property_fields(self):
         for field in self:
-            if (field.name not in ['body', 'subject']
-               and not field.name.startswith('requester')):
+            if field.name not in REQUESTER_FIELDS + MESSAGE_FIELDS:
                 yield field
+
+    def clean_requester(self):
+        requester_id = self.cleaned_data.get('requester')
+        try:
+            requester = User.objects.get(id=requester_id)
+        except User.DoesNotExist:
+            raise forms.ValidationError("Invalid user specified")
+        return requester
+
+    def clean_assignee(self):
+        assignee_id = self.cleaned_data.get('assignee')
+        # The assignee is not mandatory so if it is empty, we just ignore it
+        if not assignee_id:
+            return assignee_id
+        try:
+            assignee = User.objects.get(id=assignee_id, is_staff=True)
+        except User.DoesNotExist:
+            raise forms.ValidationError("Invalid user specified")
+        return assignee
 
     class Meta:
         model = get_model('oscar_support', 'Ticket')
-        exclude = ['number', 'subticket_number', 'parent',
-                   'date_created', 'date_updated']
-        widgets = {
-            'status': forms.HiddenInput(),
-        }
+        fields = REQUESTER_FIELDS + [
+            'status',
+            'priority', 'type',
+            'assigned_group', 'assignee',
+        ] + MESSAGE_FIELDS
+        widgets = {'status': forms.HiddenInput()}
 
 
 class TicketUpdateForm(forms.ModelForm):
@@ -92,33 +118,3 @@ class RequesterCreateForm(forms.ModelForm):
     class Meta:
         model = get_model('auth', 'User')
         fields = ['first_name', 'last_name', 'email']
-
-
-class RelatedOrderForm(forms.ModelForm):
-    order = AutoCompleteField(
-        model=get_model('order', 'Order'),
-        url='/api/v1/order/search/'
-    )
-
-    class Meta:
-        model = get_model('oscar_support', 'RelatedOrder')
-
-
-class RelatedOrderLineForm(forms.ModelForm):
-    line = AutoCompleteField(
-        model=get_model('order', 'Line'),
-        url='/api/v1/line/search/'
-    )
-
-    class Meta:
-        model = get_model('oscar_support', 'RelatedOrderLine')
-
-
-class RelatedProductForm(forms.ModelForm):
-    product = AutoCompleteField(
-        model=get_model('catalogue', 'Product'),
-        url='/api/v1/product/search/'
-    )
-
-    class Meta:
-        model = get_model('oscar_support', 'RelatedProduct')

@@ -140,6 +140,9 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     'south',
     'compressor',
+    'rest_framework',
+    'django_select2',
+    'django_filters',
 
     'oscar_support',
 ]
@@ -223,3 +226,15 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 ########## END HAYSTACK SETTINGS
+
+########## REST FRAMEWORK SETTINGS
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
+}
+########## END REST FRAMEWORK SETTINGS

@@ -4,8 +4,6 @@ from django.db.models import get_model, Q
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
-from extra_views import CreateWithInlinesView, InlineFormSet
-
 from . import forms
 from .. import defaults
 
@@ -55,52 +53,16 @@ class TicketListView(TicketListMixin, generic.ListView):
 class UserFormInlineMixin(object):
 
     def get_extra_form_kwargs(self):
-        kwargs = super(RelatedOrderLineInline, self).get_extra_form_kwargs()
+        kwargs = super(UserFormInlineMixin, self).get_extra_form_kwargs()
         kwargs['user'] = self.request.user
-        print 'ADD USER TO FORM', kwargs
         return kwargs
 
 
-class RelatedProductInline(UserFormInlineMixin, InlineFormSet):
-    model = get_model('oscar_support', 'RelatedProduct')
-    form_class = forms.RelatedProductForm
-    extra = 1
-    max_num = 1
-
-
-class RelatedOrderInline(UserFormInlineMixin, InlineFormSet):
-    model = get_model('oscar_support', 'RelatedOrder')
-    form_class = forms.RelatedOrderForm
-    extra = 1
-    max_num = 1
-
-
-class RelatedOrderLineInline(UserFormInlineMixin, InlineFormSet):
-    model = get_model('oscar_support', 'RelatedOrderLine')
-    form_class = forms.RelatedOrderLineForm
-    extra = 1
-
-
-class AttachmentInline(InlineFormSet):
-    model = get_model('oscar_support', 'Attachment')
-    extra = 3
-
-
-class TicketCreateView(CreateWithInlinesView):
+class TicketCreateView(generic.CreateView):
     model = Ticket
     template_name = 'oscar_support/dashboard/ticket_create.html'
     default_status = None
     form_class = forms.TicketCreateForm
-    inlines = [RelatedProductInline, RelatedOrderInline,
-               RelatedOrderLineInline, AttachmentInline]
-
-    def forms_valid(self, form, inlines):
-        self.object = form.save(commit=False)
-        self.object.save()
-
-        for formset in inlines:
-            formset.save()
-        return HttpResponseRedirect(self.get_success_url())
 
     def get_default_status(self):
         if self.default_status:
