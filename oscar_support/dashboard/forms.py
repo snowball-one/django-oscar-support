@@ -36,8 +36,9 @@ class TicketCreateForm(forms.ModelForm):
                 yield field
 
     def get_property_fields(self):
+        ignore_fields = REQUESTER_FIELDS + MESSAGE_FIELDS + ['status']
         for field in self:
-            if field.name not in REQUESTER_FIELDS + MESSAGE_FIELDS + ['status']:
+            if field.name not in ignore_fields:
                 yield field
 
     def clean_requester(self):

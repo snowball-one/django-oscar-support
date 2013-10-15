@@ -60,8 +60,10 @@ class CustomRadioFieldRenderer(RadioFieldRenderer):
 
     def __iter__(self):
         for i, choice in enumerate(self.choices):
-            yield CustomRadioInput(self.name, self.value, self.attrs.copy(), choice, i)
+            yield CustomRadioInput(self.name, self.value, self.attrs.copy(),
+                                   choice, i)
 
     def __getitem__(self, idx):
-        choice = self.choices[idx] # Let the IndexError propogate
-        return CustomRadioInput(self.name, self.value, self.attrs.copy(), choice, idx)
+        choice = self.choices[idx]  # Let the IndexError propogate
+        return CustomRadioInput(self.name, self.value, self.attrs.copy(),
+                                choice, idx)
