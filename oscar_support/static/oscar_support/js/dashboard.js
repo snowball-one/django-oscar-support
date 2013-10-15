@@ -1,11 +1,8 @@
 var support = support || {};
-
 support.dashboard = {
-    init: function () {
-    },
-
+    init: function () {},
     initAutoComplete: function () {
-        $('.autocomplete-field').select2({
+        $('.autocomplete-ajax-field').select2({
             minimumInputLength: 3,
             query: function (options) {
                 var apiUrl = $(this)[0].element.data('source-url');

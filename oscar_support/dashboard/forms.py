@@ -37,7 +37,7 @@ class TicketCreateForm(forms.ModelForm):
 
     def get_property_fields(self):
         for field in self:
-            if field.name not in REQUESTER_FIELDS + MESSAGE_FIELDS:
+            if field.name not in REQUESTER_FIELDS + MESSAGE_FIELDS + ['status']:
                 yield field
 
     def clean_requester(self):
@@ -60,7 +60,7 @@ class TicketCreateForm(forms.ModelForm):
         return assignee
 
     class Meta:
-        model = get_model('oscar_support', 'Ticket')
+        model = Ticket
         fields = REQUESTER_FIELDS + [
             'status',
             'priority', 'type',
@@ -81,16 +81,6 @@ class TicketUpdateForm(forms.ModelForm):
         label=_("Message text"),
         required=False
     )
-    message_template = forms.ChoiceField(label=_("Template"), required=False)
-
-    def __init__(self, *args, **kwargs):
-        super(TicketUpdateForm, self).__init__(*args, **kwargs)
-
-        template_choices = [('', _("Please select a template"))]
-        for event_type in CommunicationEventType.objects.all():
-            template_choices.append((event_type.id, event_type.name,))
-
-        self.fields['message_template'].choices = template_choices
 
     def get_property_fields(self):
         for field in self:
@@ -103,7 +93,7 @@ class TicketUpdateForm(forms.ModelForm):
                 yield field
 
     class Meta:
-        model = get_model('oscar_support', 'Ticket')
+        model = Ticket
         fields = ['status', 'message_type', 'message_text']
         widgets = {
             'status': forms.HiddenInput(),
@@ -116,5 +106,5 @@ class RequesterCreateForm(forms.ModelForm):
     email = forms.EmailField()
 
     class Meta:
-        model = get_model('auth', 'User')
+        model = User
         fields = ['first_name', 'last_name', 'email']

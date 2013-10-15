@@ -4,7 +4,9 @@
 {% block extrahead %}
     {{ block.super }}
     <link rel="stylesheet" href="{% static "oscar_support/lib/select2/select2.css" %}" type="text/css" charset="utf-8">
-    <link rel="stylesheet" href="{% static "oscar_support/css/support.css" %}" type="text/css" charset="utf-8">
+
+    <link rel="stylesheet/less" href="{% static "oscar_support/less/support.less" %}" type="text/css" charset="utf-8">
+    <script src="{% static "oscar_support/lib/less/less-1.4.1.min.js" %}" type="text/javascript"></script>
 {% endblock %}
 
 {% block extrascripts %}
@@ -12,9 +14,3 @@
     <script type="text/javascript" src="{% static "oscar_support/lib/select2/select2.min.js" %}"></script>
     <script type="text/javascript" src="{% static "oscar_support/js/dashboard.js" %}"></script>
 {% endblock %}
-
-{% block onbodyload %}
-    {{ block.super }}
-    //support.dashboard.init();
-{% endblock %}
-

@@ -1,30 +1,31 @@
 {% load i18n %}
 {% load ticket_tags %}
 
+{% get_default_ticket_status as default_status %}
+
 <div id="status-save-button" class="btn-group dropup">
-    <button class="btn btn-primary btn-large">
-        {% get_default_ticket_status as default_status %}
-        {% blocktrans with status=ticket.status.name|default:default_status %}
-            Save as {{ status }}
+
+    {% with status=ticket.status|default:default_status %}
+    <button class="btn btn-primary btn-large" name="status" value="{{ status.uuid }}">
+        {% blocktrans with status_name=status.name %}
+            Submit as {{ status_name }}
         {% endblocktrans %}
     </button>
     <button class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown">
         <span class="caret"></span>
     </button>
+
     <ul class="dropdown-menu">
         {% get_ticket_statuses as statuses %}
         {% for ticket_status in statuses %}
         <li data-status-id="{{ ticket_status.id }}">
-            <a href=".">
-                {% comment %}
-                    Removed until we get more time to think about this 
-                    <i class="icon-{{ ticket_status.name|lower }}"></i>
-                {% endcomment %}
+            <button class="status-dropdown-button" type="submit" name='status' value="{{ ticket_status.uuid }}">
                 {% blocktrans with status=ticket_status %}
-                    Save as <strong>{{ status }}</strong>
+                    Submit as <strong>{{ status }}</strong>
                 {% endblocktrans %}
-            </a>
+            </button>
         </li>
         {% endfor %}
     </ul>
+    {% endwith %}
 </div>

@@ -98,16 +98,16 @@
                 <div class="ticket-message">
                     {% for field in form.get_message_fields %}
                     {% if field.is_hidden %}
-                    {{ field }}
-                    {% else %}
-                    <div class="control-group {% if field.errors %}error{% endif %}">
                         {{ field }}
-                        {% for error in field.errors %}
-                        <ul class="help-block">
-                            <li>{{ error }}</li>
-                        </ul>
-                        {% endfor %}
-                    </div>
+                    {% else %}
+                        <div class="control-group {% if field.errors %}error{% endif %}">
+                            {{ field }}
+                            {% for error in field.errors %}
+                            <ul class="help-block">
+                                <li>{{ error }}</li>
+                            </ul>
+                            {% endfor %}
+                        </div>
                     {% endif %}
                     {% endfor %}
                 </div>
@@ -115,8 +115,13 @@
                 <div class="ticket-list ticket-messages">
                     {% get_messages selected_ticket as selected_ticket_messages %}
                     {% for msg in selected_ticket_messages %}
-                     <div class="well {% if msg.is_internal %}internal-message{% endif %}">
-                        <p><strong>{% if msg.is_internal %}{% trans "Internal Nate from:" %}{% else %}{% trans "From:" %}{% endif %}</strong> {{ msg.user.get_fullname|default:msg.user.email }}, {{ msg.date_created|date:"jS M Y H:i" }}</p>
+                    <div class="well {% if msg.is_internal %}internal-message{% endif %}">
+                        <p>
+                            <strong>
+                                {% if msg.is_internal %}{% trans "Internal note from:" %}{% else %}{% trans "From:" %}{% endif %}
+                            </strong>
+                            {{ msg.user.get_fullname|default:msg.user.email }}, {{ msg.date_created|date:"jS M Y H:i" }}
+                        </p>
                         {{ msg.text|safe }}
                     </div>
                     {% endfor %}
@@ -146,5 +151,9 @@
 
     </div>
 </form>
+{% endblock %}
 
+{% block onbodyload %}
+    {{ block.super }}
+    support.dashboard.initAutoComplete();
 {% endblock %}

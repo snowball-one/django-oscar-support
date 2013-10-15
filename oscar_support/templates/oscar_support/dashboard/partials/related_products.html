@@ -3,8 +3,14 @@
 {% load currency_filters %}
 
 <div class="table-header">
-    <h3>{% trans "Related products:" %} <a class="btn pull-right" data-toggle="collapse" data-target="#related-products">{% trans "Show/Hide" %}{{ order.number }}</a></h3>
+    <h3>
+        {% trans "Related products:" %}
+        <a class="btn pull-right" data-toggle="collapse" data-target="#related-products">
+            {% trans "Show/Hide" %}{{ order.number }}
+        </a>
+    </h3>
 </div>
+
 {% for rel_product in ticket.relatedproducts.all %}
     {% with product=rel_product.product %}
         <div id="related-products" class="collapse in">

@@ -51,7 +51,7 @@ class TestAStaffMember(WebTestCase):
         ticket_form['type'] = ticket_type.uuid
         ticket_form['subject'] = 'this is my subject'
         ticket_form['body'] = 'the actual message'
-        page = ticket_form.submit()
+        ticket_form.submit(name='status', index=0)
 
         ticket = Ticket.objects.get(requester=customer)
         self.assertEquals(ticket.number, "1")
@@ -67,11 +67,10 @@ class TestAStaffMember(WebTestCase):
         page = self.get(reverse('support-dashboard:ticket-create'))
         ticket_form = page.forms['ticket-create-form']
         ticket_form['requester'] = customer.id
-        ticket_form['status'] = status.uuid
         ticket_form['type'] = ticket_type.uuid
         ticket_form['subject'] = 'this is my subject'
         ticket_form['body'] = 'the actual message'
-        ticket_form.submit()
+        ticket_form.submit(name='status', index=1)
 
         ticket = Ticket.objects.get(requester=customer)
         self.assertEquals(ticket.number, "1")
