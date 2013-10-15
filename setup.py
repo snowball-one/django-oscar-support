@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
 
-from oscar_support import get_version
-
 
 setup(
     name='django-oscar-support',
-    version=get_version(),
+    version='0.1.0',
     url='https://github.com/tangentlabs/django-oscar-support',
     author="Sebastian Vetter",
     author_email="sebastian.vetter@tangentsnowball.com.au",
