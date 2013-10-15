@@ -8,6 +8,7 @@ pytest==2.4.2
 pytest-django==2.3.1
 pytest-sugar==0.2.2
 pytest-cov==1.6
+pytest-pep8==1.0.5
 django-oscar-testsupport==0.2
 django-dynamic-fixture==1.4.2
 WebTest==1.3.4
