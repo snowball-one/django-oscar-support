@@ -1,3 +1,4 @@
 include *.rst
+include LICENSE
 recursive-include oscar_support/templates *.txt *.html
 recursive-include oscar_support/static *
