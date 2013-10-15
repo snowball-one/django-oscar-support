@@ -192,11 +192,15 @@ class AbstractMessage(ModificationTrackingMixin, BaseSupportModel):
     )
     text = models.TextField(_("Text"))
 
+    @property
+    def is_internal(self):
+        return self.type == self.INTERNAL
+
     def __unicode__(self):
         return "{0} from {1} for ticket #{2}".format(
-            self.get_type_display,
+            self.type,
             self.user.email,
-            self.ticket.number
+            self.ticket
         )
 
     class Meta:

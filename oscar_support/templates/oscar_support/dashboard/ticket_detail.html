@@ -25,30 +25,49 @@
 {% block dashboard_content %}
 <form id="ticket-update-form" data-ticket-id="{{ selected_ticket.uuid }}" method="post" action="." class="form-inline wysiwyg">
     {% csrf_token %}
+
     <div class='row-fluid'>
         <aside class="span3">
             <div class="table-header">
                 <i class="icon-comments icon-large"></i>{% trans "Tickets" %}
-                <a href="{% url 'support-dashboard:ticket-create' %}" class="btn btn-primary pull-right">
-                    <i class="icon-plus"></i> {% trans "Create new ticket" %}
-                </a>
             </div>
-            <div class="ticket-list">
-                {% for ticket in ticket_list %}
-                <div class="well {% if ticket.uuid == selected_ticket.uuid %}active{% endif %}">
-                    <a href="{% url 'support-dashboard:ticket-update' ticket.uuid %}"
-                       class="btn {% if ticket.uuid == selected_ticket.uuid %}btn-primary{% endif %} pull-right">
-                        {% trans "Select" %}
+
+            <ul class="nav nav-tabs">
+                <li>
+                    <a href="{% url 'support-dashboard:ticket-create' %}">
+                        <i class="icon-plus"></i> {% trans "New" %}
                     </a>
-                    <p>
-                        {% blocktrans with number=ticket.printable_number subject=ticket.subject|truncatechars:30 %}
-                        <strong>Ticket #{{ number }}:</strong> {{ subject }}</br>
-                        {% endblocktrans %}
-                        <strong>{% trans "Last modified:" %}</strong> {{ ticket.date_updated|date:"jS M Y H:i" }}<br/>
-                        <strong>Status:</strong> <span class="label">{{ ticket.status.name }}</span> <span class="label">{{ ticket.type.name }}</span>
-                    </p>
+                </li>
+                <li class="active" data-toggle='tab'>
+                    <a href="#recent-tickets">
+                        <i class="icon-time"></i> {% trans "Recent" %}
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div id="recent-tickets" class="tab-pane active">
+                    {% for ticket in ticket_list %}
+                    <div class="well {% if ticket.uuid == selected_ticket.uuid %}active{% endif %}">
+                        <a href="{% url 'support-dashboard:ticket-update' ticket.uuid %}"
+                        class="btn {% if ticket.uuid == selected_ticket.uuid %}btn-primary{% endif %} pull-right">
+                            {% trans "Select" %}
+                        </a>
+                        <p>
+                            <span class="label">{{ ticket.status.name }}</span>
+                            {% blocktrans with number=ticket.printable_number subject=ticket.subject|truncatechars:30 %}
+                                <strong>Ticket #{{ number }}:</strong> {{ subject }}</br>
+                            {% endblocktrans %}
+                            <span class="label">{{ ticket.type.name }}</span><br />
+                            <strong>{% trans "Last modified:" %}</strong> {{ ticket.date_updated|date:"jS M Y H:i" }}
+                        </p>
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+
+            </div>
+
+            <div class="ticket-list">
             </div>
         </aside>
 
@@ -61,12 +80,22 @@
                 <div class="well">
                     <div class="row-fluid">
                         <div class="span7">
-                            <p><strong>{% trans "Last updated:" %}</strong> {{ selected_ticket.date_updated|date:"jS M Y H:i" }} <br/>
-                                <strong>{% trans "Status:" %}</strong> <span class="label">{{ selected_ticket.status.name }}</span> <span class="label">{{ selected_ticket.type.name }}</span>
+                            <strong>{% trans "Last updated:" %}</strong> {{ selected_ticket.date_updated|date:"jS M Y H:i" }} <br/>
+                            <h3>
+                                <span class="label label-large">{{ selected_ticket.status.name }}</span>
+                                <strong>{% trans "Ticket #" %}{{ selected_ticket.printable_number }}: {{ selected_ticket.subject|truncatechars:30 }}</strong>
+                            </h3>
+                            <p>
+                                <span class="label label-large">{{ selected_ticket.type.name }}</span>
                             </p>
-                            <h4><strong>{% trans "#" %}{{ selected_ticket.printable_number }}: {{ selected_ticket.subject|truncatechars:30 }}</strong></h4>
+
                             {% with requester=selected_ticket.requester %}
-                                <h3><strong>{% trans "From:" %}</strong> {{ requester.get_full_name|default:requester.email }}</h3>
+                                <h3>
+                                    <strong>{% trans "From:" %}</strong>
+                                    <a href="{% url "dashboard:user-detail" pk=requester.id %}">
+                                        {{ requester.get_full_name|default:requester.email }}
+                                    </a>
+                                </h3>
                             {% endwith %}
                         </div>
                         <div class="span5">
@@ -116,13 +145,19 @@
                     {% get_messages selected_ticket as selected_ticket_messages %}
                     {% for msg in selected_ticket_messages %}
                     <div class="well {% if msg.is_internal %}internal-message{% endif %}">
-                        <p>
-                            <strong>
-                                {% if msg.is_internal %}{% trans "Internal note from:" %}{% else %}{% trans "From:" %}{% endif %}
-                            </strong>
-                            {{ msg.user.get_fullname|default:msg.user.email }}, {{ msg.date_created|date:"jS M Y H:i" }}
-                        </p>
-                        {{ msg.text|safe }}
+                        <ul>
+                            <li>
+                                <strong>
+                                    {% if msg.is_internal %}{% trans "Internal note from:" %}{% else %}{% trans "From:" %}{% endif %}
+                                </strong>
+                                {{ msg.user.get_fullname|default:msg.user.email }}
+                            </li>
+                            <li>
+                                <strong>Updated:</strong> {{ msg.date_created|date:"jS M Y H:i" }}
+                            </li>
+                        </ul>
+
+                        <p>{{ msg.text|safe }}</p>
                     </div>
                     {% endfor %}
 
