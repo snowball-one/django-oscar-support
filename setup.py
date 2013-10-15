@@ -1,13 +1,7 @@
 #!/usr/bin/env python
-import os
-
 from setuptools import setup, find_packages
 
 from oscar_support import get_version
-
-
-def location(path):
-    return os.path.join(os.path.dirname(__file__))
 
 
 setup(
@@ -17,7 +11,7 @@ setup(
     author="Sebastian Vetter",
     author_email="sebastian.vetter@tangentsnowball.com.au",
     description="Ticketing and customer support for Oscar",
-    long_description=open(location('README.rst')).read(),
+    long_description=open('README.rst').read(),
     keywords="django, oscar, e-commerce, customer support, issue tracking",
     license='BSD',
     platforms=['linux'],
