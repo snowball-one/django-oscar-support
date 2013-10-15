@@ -1,4 +1,5 @@
 {% extends 'oscar_support/dashboard/layout.html' %}
+
 {% load form_tags %}
 {% load i18n %}
 {% load url from future %}
@@ -27,7 +28,7 @@
 {% endblock %}
 
 {% block dashboard_content %}
-<form class="form" id="ticket-create-form" method="post" action=".">
+<form class="form wysiwyg" id="ticket-create-form" method="post" action=".">
     {% csrf_token %}
 
     <div class="row-fluid">
@@ -38,25 +39,35 @@
 
             <div class="page-content well">
                 <div class="well">
-                    {% include "oscar_support/partials/form_field.html" with field=form.requester %}
-                    <span>
-                        {% blocktrans %}
-                            Enter an existing user or
-                            <a href="#requester-create-form-modal" data-toggle="modal">
-                                add a new user
-                            </a>.
-                        {% endblocktrans %}
-                    </span>
-                    {% include "oscar_support/partials/form_field.html" with field=form.is_internal %}
+                    <div class="row-fluid">
+                        <div class="span6">
+                            {% include "oscar_support/partials/form_field.html" with field=form.requester %}
+                            <span>
+                                {% blocktrans %}
+                                    Enter an existing user or
+                                    <a href="#requester-create-form-modal" data-toggle="modal">
+                                        add a new user
+                                    </a>.
+                                {% endblocktrans %}
+                            </span>
+                        </div>
+                        <div class="span6">
+                            {% include "oscar_support/partials/form_field.html" with field=form.is_internal %}
+                        </div>
+                    </div>
                 </div>
 
-                <div class="well">
+                <div class="well ticket-property-fields">
+                    <div class="row-fluid">
                     {% for field in form.get_property_fields %}
-                        {% include "oscar_support/partials/form_field.html" %}
+                        <div class="span3">
+                            {% include "oscar_support/partials/form_field.html" %}
+                        </div>
                     {% endfor %}
+                    </div>
                 </div>
 
-                <div class="well">
+                <div class="well ticket-message-fields">
                 {% for field in form.get_message_fields %}
                     {% include "oscar_support/partials/form_field.html" %}
                 {% endfor %}
@@ -89,14 +100,15 @@
 <div id="requester-create-form-modal" class="modal hide fade" tabindex="-1"
      role="dialog" aria-labelledby="requester-create-form-modal-label" aria-hidden="true">
     <form id="create-user-form" method="post" action="{% url 'support-api:customer-list' %}">
+        {% csrf_token %}
+
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3 id="requester-create-form-modal-label">{% trans "Create new user" %}</h3>
         </div>
 
         <div class="modal-body">
-                {% csrf_token %}
-                {% include "partials/form_fields.html" with form=requester_create_form %}
+            {% include "partials/form_fields.html" with form=requester_create_form %}
         </div>
 
         <div class="modal-footer">

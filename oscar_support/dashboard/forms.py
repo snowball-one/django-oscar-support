@@ -66,7 +66,12 @@ class TicketCreateForm(forms.ModelForm):
             'priority', 'type',
             'assigned_group', 'assignee',
         ] + MESSAGE_FIELDS
-        widgets = {'status': forms.HiddenInput()}
+        widgets = {
+            'status': forms.HiddenInput(),
+            'priority': forms.Select(attrs={'style': 'width: 100%;'}),
+            'type': forms.Select(attrs={'style': 'width: 100%;'}),
+            'assigned_group': forms.Select(attrs={'style': 'width: 100%;'}),
+        }
 
 
 class TicketUpdateForm(forms.ModelForm):

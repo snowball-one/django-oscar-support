@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "oscar/customer/profile/profile.html" %}
 
 {% load i18n %}
 {% load url from future %}
@@ -25,19 +25,9 @@
 
 {% block header %}
 <div class="page-header">
-    <h2>{% trans 'Account' %}</h2>
-</div>
-{% endblock header %}
-
-{% block subnavigation %}
-    {% include "partials/nav_profile.html" with support="active" %}
-{% endblock %}
-
-{% block subheader %}
-<div class="sub-header">
     <h2>{% trans 'Create new ticket' %}</h2>
 </div>
-{% endblock subheader %}
+{% endblock header %}
 
 {% block content %}
 <form id="create-ticket-form" action="." method="post" class="form">
@@ -51,7 +41,4 @@
         <a href="{% url 'support:customer-ticket-list' %}">{% trans "cancel" %}</a>
     </div>
 </form>
-
-<hr />
-
 {% endblock content %}

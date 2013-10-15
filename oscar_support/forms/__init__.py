@@ -27,23 +27,10 @@ class TicketUpdateForm(forms.ModelForm):
 
 
 class TicketCreateForm(forms.ModelForm):
-    order = forms.ChoiceField(
-        label=_("Related to order"),
-        required=False
-    )
 
     def __init__(self, user, *args, **kwargs):
-        super(TicketCreateForm, self).__init__(*args, **kwargs)
         self.user = user
-        order_choices = [(0, _('Not related to an order'))]
-        orders = Order.objects.filter(user=self.user).order_by('date_placed')
-        for order in orders:
-            label = _("Order #%s for %s") % (
-                order.number,
-                render_currency(order.total_incl_tax)
-            )
-            order_choices.append((order.id, label))
-        self.fields['order'].choices = order_choices
+        super(TicketCreateForm, self).__init__(*args, **kwargs)
 
     def save(self, commit=True):
         instance = super(TicketCreateForm, self).save(commit=False)
@@ -56,20 +43,6 @@ class TicketCreateForm(forms.ModelForm):
 
         if commit:
             instance.save()
-
-        order_id = self.cleaned_data['order']
-        if order_id:
-            try:
-                order = Order.objects.get(id=order_id)
-            except Order.DoesNotExist:
-                pass
-            else:
-                instance.save()
-                RelatedOrder.objects.create(
-                    ticket=instance,
-                    order=order,
-                    user=self.user,
-                )
         return instance
 
     class Meta:
