@@ -3,8 +3,6 @@ from django.conf import settings
 from django.db.models import get_model
 from django.utils.translation import ugettext_lazy as _
 
-from oscar.templatetags.currency_filters import render_currency
-
 from .. import defaults
 
 Order = get_model('order', 'Order')
