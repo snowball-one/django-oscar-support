@@ -20,7 +20,6 @@ setup(
         'Django>=1.4',
         'django-oscar',
         'django-extensions',
-        'django-extra-views>=0.5.2',
         'djangorestframework',
     ],
     classifiers=[

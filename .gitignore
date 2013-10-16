@@ -4,6 +4,7 @@
 *.db
 *.egg-info
 *.dot
+*.*~
 
 .vagrant
 .coverage
@@ -13,5 +14,5 @@
 .cache/
 cover/
 htmlcov/
-docs/_build/
+docs/build/
 sandbox/public/

@@ -59,10 +59,11 @@ Screenshots
     :target: https://github.com/tangentlabs/django-oscar-support/raw/master/docs/source/_static/screenshots/dashboard_update_ticket.png
 
 
-Getting Started
----------------
+Documentation
+-------------
 
-Setup instructions are following soon. Stay tuned...
+You'll find installation instruction and further documentation at
+`django-oscar-support.rtfd.org`_ generously hosted by `readthedocs.org`_.
 
 
 License
@@ -71,3 +72,5 @@ License
 *django-oscar-support* is released under the permissive `New BSD License`_
 
 .. _`New BSD License`: https://github.com/tangentlabs/django-oscar-support/blob/master/LICENSE
+.. _`django-oscar-support.rtfd.org`: http://django-oscar-support.rtfd.org
+.. _`readthedocs.org`: https://readthedocs.org/
