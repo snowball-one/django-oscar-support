@@ -35,7 +35,13 @@ To make your Django project aware of the new package add it to your
         ...
     )
 
-and run the migrations to make sure that all the required tables are created in
+and while you are in your ``settings.py`` (or whatever your settings file is
+called) add the following line to enable sensible default settings for
+*django-oscar-support*::
+    
+    from oscar_support.defaults import *
+
+Now run the migrations to make sure that all the required tables are created in
 the database. In most cases this will be something like but might be different
 depending on your project setup::
 
@@ -111,8 +117,30 @@ better to take a look at the templates in ``oscar_support/templates`` and
 integrate extended templates into your own template directory.
 
 
+Configuring The RESTful API
+---------------------------
+
+*django-oscar-support* provides and uses a RESTful API for serveral resources
+such as the User. We use `django-rest-framework`_ (DRF) to provide the API URLs
+and render the data into a RESTful format. This also provides authentication
+mechanisms that can easily configured in the the settings file. We provide
+sensible defaults for this in ``oscar_support.defaults`` that you probably
+added to your settings already if you followed the instructions above. 
+
+The default configuration for DRF restricts API usage to session-based
+authentication and only provides JSON as serialisation format. We also disable
+the browsable API provided by DRF to avoid accidentally exposing it in
+production. You can change all of these settings by overriding the
+``REST_FRAMEWORK`` dictionary in your settings file. For more info on settings
+available for DRF take a look at `their excellent documentation`_.
+
 .. note:: This is just the beginning, there's more docs to come.
+
+
 
 
 .. _`documentation for Oscar`: http://django-oscar.readthedocs.org/en/latest/internals/getting_started.html
 .. _`How to customise templates`: http://django-oscar.readthedocs.org/en/latest/howto/how_to_customise_templates.html
+
+.. _`django-rest-framework`: http://django-rest-framework.org
+.. _`their excellent documentation`: http://django-rest-framework.org/api-guide/settings.html

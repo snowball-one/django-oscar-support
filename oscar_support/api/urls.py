@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls.defaults import url, patterns, include
 
 from rest_framework import routers
@@ -14,8 +15,14 @@ router.register(r'groups', views.GroupViewSet)
 urlpatterns = patterns(
     '',
     url(r'^', include(router.urls, namespace='support-api')),
-    url(
-        r'^api-auth/',
-        include('rest_framework.urls', namespace='rest_framework')
-    ),
 )
+
+
+if settings.DEBUG:
+    urlpatterns = urlpatterns + patterns(
+        '',
+        url(
+            r'^api-auth/',
+            include('rest_framework.urls', namespace='rest_framework')
+        ),
+    )
