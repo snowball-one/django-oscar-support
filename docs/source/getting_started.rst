@@ -2,6 +2,14 @@
 Getting Started
 ===============
 
+.. warning:: *django-oscar-support* has been tested with Oscar 0.6 ``master``
+    (due to it's pre-release state) and only works with commit `4aea545de3`_
+    or later. Due to major changes in the stock record architecture and the
+    customer account templates earlier version will not work with the
+    instructions below.
+
+.. _`4aea545de3`: https://github.com/tangentlabs/django-oscar/commit/4aea545de3d79fb20af49c24984541873c6be89c
+
 Installation
 ------------
 
