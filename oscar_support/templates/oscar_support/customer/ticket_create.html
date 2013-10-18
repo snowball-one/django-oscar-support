@@ -19,15 +19,17 @@
         <a href="{% url 'customer:summary' %}">{% trans 'Account' %}</a>
         <span class="divider">/</span>
     </li>
-	<li class="active">{% trans 'Create ticket' %}</li>
+    <li>
+        <a href="{% url 'support:customer-ticket-list' %}">
+            {% trans 'Support' %}
+        </a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active">{% trans 'Create ticket' %}</li>
 </ul>
 {% endblock %}
 
-{% block header %}
-<div class="page-header">
-    <h2>{% trans 'Create new ticket' %}</h2>
-</div>
-{% endblock header %}
+{% block headertext %}{% trans 'Create new ticket' %}{% endblock headertext %}
 
 {% block content %}
 <form id="create-ticket-form" action="." method="post" class="form">

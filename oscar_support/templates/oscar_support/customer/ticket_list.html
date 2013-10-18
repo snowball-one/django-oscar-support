@@ -18,28 +18,17 @@
         <a href="{% url 'customer:summary' %}">{% trans 'Account' %}</a>
         <span class="divider">/</span>
     </li>
-	<li class="active">{% trans 'Your tickets' %}</li>
+    <li>
+        <a href="{% url 'support:customer-ticket-list' %}">{% trans 'Support' %}</a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active">{% trans 'Your tickets' %}</li>
 </ul>
 {% endblock %}
 
-{% block header %}
-<div class="page-header">
-    <h2>{% trans 'Account' %}</h2>
-</div>
-{% endblock header %}
-
-{% block subnavigation %}
-    {% include "partials/nav_profile.html" with support="active" %}
-{% endblock %}
-
-{% block subheader %}
-<div class="sub-header">
-    <h2>{% trans 'Your tickets' %}</h2>
-</div>
-{% endblock subheader %}
+{% block headertext %}{% trans 'Your tickets' %}{% endblock headertext %}
 
 {% block content %}
-
 <div class="well">
     <a class="btn btn-success" href="{% url 'support:customer-ticket-create' %}">
         <i class="icon-inverse icon-plus"></i>
@@ -70,4 +59,3 @@
     </div>
 </div>
 {% endblock content %}
-

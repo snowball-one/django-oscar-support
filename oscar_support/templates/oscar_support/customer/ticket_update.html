@@ -19,30 +19,21 @@
         <a href="{% url 'customer:summary' %}">{% trans 'Account' %}</a>
         <span class="divider">/</span>
     </li>
-	<li class="active">
-            {% blocktrans with ticket_number=ticket.number %}Update ticket #{{ ticket_number }}{% endblocktrans %}
-        </li>
+    <li>
+        <a href="{% url 'support:customer-ticket-list' %}">{% trans 'Support' %}</a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active">
+        {% blocktrans with ticket_number=ticket.number %}Update ticket #{{ ticket_number }}{% endblocktrans %}
+    </li>
 </ul>
 {% endblock %}
 
-{% block header %}
-<div class="page-header">
-    <h2>{% trans 'Account' %}</h2>
-</div>
-{% endblock header %}
-
-{% block subnavigation %}
-    {% include "partials/nav_profile.html" with support="active" %}
-{% endblock %}
-
-{% block subheader %}
-<div class="sub-header">
-    <h2>{% blocktrans with ticket_number=ticket.number %}Update ticket #{{ ticket_number }}{% endblocktrans %}</h2>
-</div>
-{% endblock subheader %}
+{% block headertext %}
+    {% blocktrans with ticket_number=ticket.number %}Update ticket #{{ ticket_number }}{% endblocktrans %}
+{% endblock headertext %}
 
 {% block content %}
-
 <div class="row-fluid">
     <div class="span12">
         <table class="table table-striped table-bordered">

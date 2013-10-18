@@ -20,7 +20,7 @@ SUPPORT_RESOLVED_STATUS = getattr(
 
 class TicketListView(generic.ListView):
     model = Ticket
-    template_name = 'oscar_support/customer/list.html'
+    template_name = 'oscar_support/customer/ticket_list.html'
     context_object_name = 'ticket_list'
 
     def get_queryset(self, queryset=None):
