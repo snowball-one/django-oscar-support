@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, url, include
+from django.conf.urls import patterns, url, include
 
 from .api import urls as api_urls
 from .app import application as oscar_support_app

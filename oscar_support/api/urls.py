@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls.defaults import url, patterns, include
+from django.conf.urls import url, patterns, include
 
 from rest_framework import routers
 
