@@ -12,7 +12,9 @@ Django Oscar Support
 **Disclaimer:** the project is still under heavy development. Things might
 change rapidly, so please use with caution.
 
-Django Oscar ticketing  is a ticketing and support system for Oscar. It
+**Requires Django 1.5+ and Oscar 0.6+ with support for custom user models**
+
+Django Oscar ticketing is a ticketing and support system for Oscar. It
 currently provides an interface to the customer to submit a support ticket. In
 the dashboard, authorised users can see the tickets and respond or act on them.
 

@@ -4,6 +4,8 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+from oscar.core.compat import AUTH_USER_MODEL, AUTH_USER_MODEL_NAME
+
 
 class Migration(SchemaMigration):
 
@@ -30,11 +32,11 @@ class Migration(SchemaMigration):
             ('number', self.gf('django.db.models.fields.CharField')(max_length=64, db_index=True)),
             ('subticket_id', self.gf('django.db.models.fields.PositiveIntegerField')(default=0)),
             ('parent', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='subtickets', null=True, to=orm['oscar_support.Ticket'])),
-            ('requester', self.gf('django.db.models.fields.related.ForeignKey')(related_name='submitted_tickets', to=orm['auth.User'])),
+            ('requester', self.gf('django.db.models.fields.related.ForeignKey')(related_name='submitted_tickets', to=orm[AUTH_USER_MODEL])),
             ('status', self.gf('django.db.models.fields.related.ForeignKey')(related_name='tickets', to=orm['oscar_support.TicketStatus'])),
             ('type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='tickets', to=orm['oscar_support.TicketType'])),
             ('assigned_group', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='tickets', null=True, to=orm['auth.Group'])),
-            ('assignee', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='assigned_tickets', null=True, to=orm['auth.User'])),
+            ('assignee', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='assigned_tickets', null=True, to=orm[AUTH_USER_MODEL])),
             ('subject', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('body', self.gf('django.db.models.fields.TextField')()),
             ('priority', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='tickets', null=True, to=orm['oscar_support.Priority'])),
@@ -59,7 +61,7 @@ class Migration(SchemaMigration):
             ('date_created', self.gf('django.db.models.fields.DateTimeField')()),
             ('date_updated', self.gf('django.db.models.fields.DateTimeField')()),
             ('uuid', self.gf('shortuuidfield.fields.ShortUUIDField')(max_length=22, primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='messages', to=orm['auth.User'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='messages', to=orm[AUTH_USER_MODEL])),
             ('type', self.gf('django.db.models.fields.CharField')(default=u'public', max_length=3)),
             ('ticket', self.gf('django.db.models.fields.related.ForeignKey')(related_name='messages', to=orm['oscar_support.Ticket'])),
             ('text', self.gf('django.db.models.fields.TextField')()),
@@ -72,7 +74,7 @@ class Migration(SchemaMigration):
             ('date_updated', self.gf('django.db.models.fields.DateTimeField')()),
             ('uuid', self.gf('shortuuidfield.fields.ShortUUIDField')(max_length=22, primary_key=True)),
             ('ticket', self.gf('django.db.models.fields.related.ForeignKey')(related_name='relatedorderlines', to=orm['oscar_support.Ticket'])),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='relatedorderlines', to=orm['auth.User'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='relatedorderlines', to=orm[AUTH_USER_MODEL])),
             ('line', self.gf('django.db.models.fields.related.ForeignKey')(related_name='ticket_related_order_lines', to=orm['order.Line'])),
         ))
         db.send_create_signal(u'oscar_support', ['RelatedOrderLine'])
@@ -83,7 +85,7 @@ class Migration(SchemaMigration):
             ('date_updated', self.gf('django.db.models.fields.DateTimeField')()),
             ('uuid', self.gf('shortuuidfield.fields.ShortUUIDField')(max_length=22, primary_key=True)),
             ('ticket', self.gf('django.db.models.fields.related.ForeignKey')(related_name='relatedorders', to=orm['oscar_support.Ticket'])),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='relatedorders', to=orm['auth.User'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='relatedorders', to=orm[AUTH_USER_MODEL])),
             ('order', self.gf('django.db.models.fields.related.ForeignKey')(related_name='ticket_related_orders', to=orm['order.Order'])),
         ))
         db.send_create_signal(u'oscar_support', ['RelatedOrder'])
@@ -94,7 +96,7 @@ class Migration(SchemaMigration):
             ('date_updated', self.gf('django.db.models.fields.DateTimeField')()),
             ('uuid', self.gf('shortuuidfield.fields.ShortUUIDField')(max_length=22, primary_key=True)),
             ('ticket', self.gf('django.db.models.fields.related.ForeignKey')(related_name='relatedproducts', to=orm['oscar_support.Ticket'])),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='relatedproducts', to=orm['auth.User'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='relatedproducts', to=orm[AUTH_USER_MODEL])),
             ('product', self.gf('django.db.models.fields.related.ForeignKey')(related_name='ticket_related_products', to=orm['catalogue.Product'])),
         ))
         db.send_create_signal(u'oscar_support', ['RelatedProduct'])
@@ -105,7 +107,7 @@ class Migration(SchemaMigration):
             ('date_updated', self.gf('django.db.models.fields.DateTimeField')()),
             ('uuid', self.gf('shortuuidfield.fields.ShortUUIDField')(max_length=22, primary_key=True)),
             ('ticket', self.gf('django.db.models.fields.related.ForeignKey')(related_name='attachments', to=orm['oscar_support.Ticket'])),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='attachments', to=orm['auth.User'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='attachments', to=orm[AUTH_USER_MODEL])),
             ('file', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
         ))
         db.send_create_signal(u'oscar_support', ['Attachment'])
@@ -167,8 +169,8 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
-        u'auth.user': {
-            'Meta': {'object_name': 'User'},
+        AUTH_USER_MODEL: {
+            'Meta': {'object_name': AUTH_USER_MODEL_NAME},
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
@@ -360,7 +362,7 @@ class Migration(SchemaMigration):
             'status': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'total_excl_tax': ('django.db.models.fields.DecimalField', [], {'max_digits': '12', 'decimal_places': '2'}),
             'total_incl_tax': ('django.db.models.fields.DecimalField', [], {'max_digits': '12', 'decimal_places': '2'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'orders'", 'null': 'True', 'to': u"orm['auth.User']"})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'orders'", 'null': 'True', 'to': u"orm['{}']".format(AUTH_USER_MODEL)})
         },
         u'order.shippingaddress': {
             'Meta': {'object_name': 'ShippingAddress'},
@@ -385,7 +387,7 @@ class Migration(SchemaMigration):
             'date_updated': ('django.db.models.fields.DateTimeField', [], {}),
             'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             'ticket': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'attachments'", 'to': u"orm['oscar_support.Ticket']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'attachments'", 'to': u"orm['auth.User']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'attachments'", 'to': u"orm['{}']".format(AUTH_USER_MODEL)}),
             'uuid': ('shortuuidfield.fields.ShortUUIDField', [], {'max_length': '22', 'primary_key': 'True'})
         },
         u'oscar_support.message': {
@@ -395,7 +397,7 @@ class Migration(SchemaMigration):
             'text': ('django.db.models.fields.TextField', [], {}),
             'ticket': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'messages'", 'to': u"orm['oscar_support.Ticket']"}),
             'type': ('django.db.models.fields.CharField', [], {'default': "u'public'", 'max_length': '3'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'messages'", 'to': u"orm['auth.User']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'messages'", 'to': u"orm['{}']".format(AUTH_USER_MODEL)}),
             'uuid': ('shortuuidfield.fields.ShortUUIDField', [], {'max_length': '22', 'primary_key': 'True'})
         },
         u'oscar_support.priority': {
@@ -411,7 +413,7 @@ class Migration(SchemaMigration):
             'date_updated': ('django.db.models.fields.DateTimeField', [], {}),
             'order': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'ticket_related_orders'", 'to': u"orm['order.Order']"}),
             'ticket': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'relatedorders'", 'to': u"orm['oscar_support.Ticket']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'relatedorders'", 'to': u"orm['auth.User']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'relatedorders'", 'to': u"orm['{}']".format(AUTH_USER_MODEL)}),
             'uuid': ('shortuuidfield.fields.ShortUUIDField', [], {'max_length': '22', 'primary_key': 'True'})
         },
         u'oscar_support.relatedorderline': {
@@ -420,7 +422,7 @@ class Migration(SchemaMigration):
             'date_updated': ('django.db.models.fields.DateTimeField', [], {}),
             'line': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'ticket_related_order_lines'", 'to': u"orm['order.Line']"}),
             'ticket': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'relatedorderlines'", 'to': u"orm['oscar_support.Ticket']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'relatedorderlines'", 'to': u"orm['auth.User']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'relatedorderlines'", 'to': u"orm['{}']".format(AUTH_USER_MODEL)}),
             'uuid': ('shortuuidfield.fields.ShortUUIDField', [], {'max_length': '22', 'primary_key': 'True'})
         },
         u'oscar_support.relatedproduct': {
@@ -429,13 +431,13 @@ class Migration(SchemaMigration):
             'date_updated': ('django.db.models.fields.DateTimeField', [], {}),
             'product': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'ticket_related_products'", 'to': u"orm['catalogue.Product']"}),
             'ticket': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'relatedproducts'", 'to': u"orm['oscar_support.Ticket']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'relatedproducts'", 'to': u"orm['auth.User']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'relatedproducts'", 'to': u"orm['{}']".format(AUTH_USER_MODEL)}),
             'uuid': ('shortuuidfield.fields.ShortUUIDField', [], {'max_length': '22', 'primary_key': 'True'})
         },
         u'oscar_support.ticket': {
             'Meta': {'ordering': "['-date_updated']", 'unique_together': "(('number', 'subticket_id'),)", 'object_name': 'Ticket'},
             'assigned_group': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'tickets'", 'null': 'True', 'to': u"orm['auth.Group']"}),
-            'assignee': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'assigned_tickets'", 'null': 'True', 'to': u"orm['auth.User']"}),
+            'assignee': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'assigned_tickets'", 'null': 'True', 'to': u"orm['{}']".format(AUTH_USER_MODEL)}),
             'body': ('django.db.models.fields.TextField', [], {}),
             'date_created': ('django.db.models.fields.DateTimeField', [], {}),
             'date_updated': ('django.db.models.fields.DateTimeField', [], {}),
@@ -446,7 +448,7 @@ class Migration(SchemaMigration):
             'related_lines': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'tickets'", 'blank': 'True', 'through': u"orm['oscar_support.RelatedOrderLine']", 'to': u"orm['order.Line']"}),
             'related_orders': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'tickets'", 'blank': 'True', 'through': u"orm['oscar_support.RelatedOrder']", 'to': u"orm['order.Order']"}),
             'related_products': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'tickets'", 'blank': 'True', 'through': u"orm['oscar_support.RelatedProduct']", 'to': u"orm['catalogue.Product']"}),
-            'requester': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'submitted_tickets'", 'to': u"orm['auth.User']"}),
+            'requester': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'submitted_tickets'", 'to': u"orm['{}']".format(AUTH_USER_MODEL)}),
             'status': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'tickets'", 'to': u"orm['oscar_support.TicketStatus']"}),
             'subject': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'subticket_id': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
@@ -468,7 +470,7 @@ class Migration(SchemaMigration):
             'code': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '128'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'users': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'partners'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['auth.User']"})
+            'users': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'partners'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['{}']".format(AUTH_USER_MODEL)})
         },
         u'partner.stockrecord': {
             'Meta': {'unique_together': "(('partner', 'partner_sku'),)", 'object_name': 'StockRecord'},
