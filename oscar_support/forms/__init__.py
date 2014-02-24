@@ -15,6 +15,12 @@ SUPPORT_INITIAL_STATUS = getattr(
     defaults.SUPPORT_INITIAL_STATUS
 )
 
+SUPPORT_INITIAL_STATUS_SLUG = getattr(
+    settings,
+    "SUPPORT_INITIAL_STATUS_SLUG",
+    defaults.SUPPORT_INITIAL_STATUS_SLUG
+)
+
 
 class TicketUpdateForm(forms.ModelForm):
     message_text = forms.CharField(label=_("Message"), widget=forms.Textarea())
@@ -33,9 +39,15 @@ class TicketCreateForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super(TicketCreateForm, self).save(commit=False)
 
-        initial_status, __ = TicketStatus.objects.get_or_create(
-            name=SUPPORT_INITIAL_STATUS
-        )
+        try:
+            initial_status = TicketStatus.objects.get(
+                slug=SUPPORT_INITIAL_STATUS_SLUG
+            )
+        except TicketStatus.DoesNotExist:
+            initial_status = TicketStatus.objects.create(
+                slug=SUPPORT_INITIAL_STATUS_SLUG,
+                name=SUPPORT_INITIAL_STATUS
+            )
         instance.status = initial_status
         instance.requester = self.user
 

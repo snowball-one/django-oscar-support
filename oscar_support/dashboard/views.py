@@ -18,6 +18,12 @@ SUPPORT_INITIAL_STATUS = getattr(
     defaults.SUPPORT_INITIAL_STATUS
 )
 
+SUPPORT_INITIAL_STATUS_SLUG = getattr(
+    settings,
+    "SUPPORT_INITIAL_STATUS_SLUG",
+    defaults.SUPPORT_INITIAL_STATUS_SLUG
+)
+
 
 class TicketListMixin(object):
     ticket_list = None
@@ -68,9 +74,15 @@ class TicketCreateView(generic.CreateView):
         if self.default_status:
             return self.default_status
 
-        self.default_status, __ = TicketStatus.objects.get_or_create(
-            name=SUPPORT_INITIAL_STATUS
-        )
+        try:
+            self.default_status = TicketStatus.objects.get(
+                slug=SUPPORT_INITIAL_STATUS_SLUG
+            )
+        except TicketStatus.DoesNotExist:
+            self.default_status = TicketStatus.objects.create(
+                slug=SUPPORT_INITIAL_STATUS_SLUG,
+                name=SUPPORT_INITIAL_STATUS
+            )
         return self.default_status
 
     def get_form_kwargs(self):
