@@ -181,7 +181,7 @@ class AbstractMessage(ModificationTrackingMixin, BaseSupportModel):
     )
     type = models.CharField(
         _("Message type"),
-        max_length=3,
+        max_length=30,
         choices=MESSAGE_TYPES,
         default=PUBLIC,
     )
