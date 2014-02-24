@@ -19,7 +19,4 @@ flake8==2.0
 pyflakes==0.7.3
 coveralls>=0.2
 
-# we need this to make sure that we test against Oscar 0.6
--e git+https://github.com/tangentlabs/django-oscar.git#egg=django-oscar
-
 django-haystack==2.1.0
