@@ -1,7 +1,6 @@
 from django.core.urlresolvers import reverse
 
 from oscar.test.testcases import WebTestCase
-from oscar.test.factories import create_order
 
 from oscar_support.models import Ticket
 from oscar_support.defaults import SUPPORT_INITIAL_STATUS
