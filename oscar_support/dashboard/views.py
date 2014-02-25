@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.views import generic
 from django.db.models import get_model, Q
 from django.http import HttpResponseRedirect
@@ -11,18 +10,6 @@ Note = get_model('oscar_support', 'Note')
 Ticket = get_model('oscar_support', 'Ticket')
 Message = get_model('oscar_support', 'Message')
 TicketStatus = get_model('oscar_support', 'TicketStatus')
-
-SUPPORT_INITIAL_STATUS = getattr(
-    settings,
-    "SUPPORT_INITIAL_STATUS",
-    defaults.SUPPORT_INITIAL_STATUS
-)
-
-SUPPORT_INITIAL_STATUS_SLUG = getattr(
-    settings,
-    "SUPPORT_INITIAL_STATUS_SLUG",
-    defaults.SUPPORT_INITIAL_STATUS_SLUG
-)
 
 
 class TicketListMixin(object):
@@ -71,18 +58,8 @@ class TicketCreateView(generic.CreateView):
     form_class = forms.TicketCreateForm
 
     def get_default_status(self):
-        if self.default_status:
-            return self.default_status
-
-        try:
-            self.default_status = TicketStatus.objects.get(
-                slug=SUPPORT_INITIAL_STATUS_SLUG
-            )
-        except TicketStatus.DoesNotExist:
-            self.default_status = TicketStatus.objects.create(
-                slug=SUPPORT_INITIAL_STATUS_SLUG,
-                name=SUPPORT_INITIAL_STATUS
-            )
+        if not self.default_status:
+            self.default_status = defaults.get_ticket_initial_status()
         return self.default_status
 
     def get_form_kwargs(self):

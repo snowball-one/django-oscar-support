@@ -38,17 +38,11 @@ class TicketListView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         ctx = super(TicketListView, self).get_context_data(**kwargs)
-        try:
-            status = TicketStatus.objects.get(
-                slug=SUPPORT_RESOLVED_STATUS_SLUG
-            )
-        except TicketStatus.DoesNotExist:
-            status = TicketStatus.objects.create(
-                slug=SUPPORT_RESOLVED_STATUS_SLUG,
-                name=SUPPORT_RESOLVED_STATUS
-            )
-        ctx['open_ticket_list'] = self.get_queryset().exclude(status=status)
-        ctx['resolved_ticket_list'] = self.get_queryset().filter(status=status)
+        resolved = defaults.get_ticket_resolved_status()
+        ctx['open_ticket_list'] = self.get_queryset().exclude(status=resolved)
+        ctx['resolved_ticket_list'] = self.get_queryset().filter(
+            status=resolved
+        )
         return ctx
 
 

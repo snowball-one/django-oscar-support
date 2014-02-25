@@ -1,5 +1,4 @@
 from django import forms
-from django.conf import settings
 from django.db.models import get_model
 from django.utils.translation import ugettext_lazy as _
 
@@ -8,18 +7,6 @@ from .. import defaults
 Order = get_model('order', 'Order')
 RelatedOrder = get_model("oscar_support", "RelatedOrder")
 TicketStatus = get_model("oscar_support", "TicketStatus")
-
-SUPPORT_INITIAL_STATUS = getattr(
-    settings,
-    "SUPPORT_INITIAL_STATUS",
-    defaults.SUPPORT_INITIAL_STATUS
-)
-
-SUPPORT_INITIAL_STATUS_SLUG = getattr(
-    settings,
-    "SUPPORT_INITIAL_STATUS_SLUG",
-    defaults.SUPPORT_INITIAL_STATUS_SLUG
-)
 
 
 class TicketUpdateForm(forms.ModelForm):
@@ -39,16 +26,7 @@ class TicketCreateForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super(TicketCreateForm, self).save(commit=False)
 
-        try:
-            initial_status = TicketStatus.objects.get(
-                slug=SUPPORT_INITIAL_STATUS_SLUG
-            )
-        except TicketStatus.DoesNotExist:
-            initial_status = TicketStatus.objects.create(
-                slug=SUPPORT_INITIAL_STATUS_SLUG,
-                name=SUPPORT_INITIAL_STATUS
-            )
-        instance.status = initial_status
+        instance.status = defaults.get_ticket_initial_status()
         instance.requester = self.user
 
         if commit:
