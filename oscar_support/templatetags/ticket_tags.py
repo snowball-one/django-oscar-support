@@ -1,19 +1,12 @@
 from django import template
-from django.conf import settings
 from django.db.models import get_model
 
-from oscar_support import defaults
+from oscar_support import utils
 
 Message = get_model('oscar_support', 'Message')
 TicketStatus = get_model('oscar_support', 'TicketStatus')
 
 register = template.Library()
-
-SUPPORT_INITIAL_STATUS = getattr(
-    settings,
-    "SUPPORT_INITIAL_STATUS",
-    defaults.SUPPORT_INITIAL_STATUS
-)
 
 
 @register.assignment_tag(takes_context=True)
@@ -33,7 +26,4 @@ def get_ticket_statuses():
 
 @register.assignment_tag
 def get_default_ticket_status():
-    status, __ = TicketStatus.objects.get_or_create(
-        name=SUPPORT_INITIAL_STATUS
-    )
-    return status
+    return utils.TicketStatusGenerator.get_initial_status()

@@ -1,4 +1,5 @@
 from django.db.models import get_model
+from oscar_support import defaults
 
 
 class TicketNumberGenerator(object):
@@ -26,3 +27,33 @@ class TicketGenerator(object):
 
     def generate_subtickets(self, ticket):
         raise NotImplementedError()
+
+
+class TicketStatusGenerator(object):
+    @classmethod
+    def get_initial_status(cls):
+        TicketStatus = get_model("oscar_support", "TicketStatus")
+        try:
+            initial_status = TicketStatus.objects.get(
+                slug=defaults.SUPPORT_INITIAL_STATUS_SLUG
+            )
+        except TicketStatus.DoesNotExist:
+            initial_status = TicketStatus.objects.create(
+                slug=defaults.SUPPORT_INITIAL_STATUS_SLUG,
+                name=defaults.SUPPORT_INITIAL_STATUS
+            )
+        return initial_status
+
+    @classmethod
+    def get_resolved_status(cls):
+        TicketStatus = get_model("oscar_support", "TicketStatus")
+        try:
+            resolved_status = TicketStatus.objects.get(
+                slug=defaults.SUPPORT_RESOLVED_STATUS_SLUG
+            )
+        except TicketStatus.DoesNotExist:
+            resolved_status = TicketStatus.objects.create(
+                slug=defaults.SUPPORT_RESOLVED_STATUS_SLUG,
+                name=defaults.SUPPORT_RESOLVED_STATUS
+            )
+        return resolved_status

@@ -1,21 +1,14 @@
 from django.views import generic
-from django.conf import settings
 from django.db.models import get_model
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
-from .defaults import SUPPORT_RESOLVED_STATUS
+from . import utils
 from .forms import TicketUpdateForm, TicketCreateForm
 
 Ticket = get_model('oscar_support', 'Ticket')
 Message = get_model('oscar_support', 'Message')
 TicketStatus = get_model('oscar_support', 'TicketStatus')
-
-SUPPORT_RESOLVED_STATUS = getattr(
-    settings,
-    "SUPPORT_RESOLVED_STATUS",
-    SUPPORT_RESOLVED_STATUS
-)
 
 
 class TicketListView(generic.ListView):
@@ -32,11 +25,11 @@ class TicketListView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         ctx = super(TicketListView, self).get_context_data(**kwargs)
-        status, __ = TicketStatus.objects.get_or_create(
-            name=SUPPORT_RESOLVED_STATUS
+        resolved = utils.TicketStatusGenerator.get_resolved_status()
+        ctx['open_ticket_list'] = self.get_queryset().exclude(status=resolved)
+        ctx['resolved_ticket_list'] = self.get_queryset().filter(
+            status=resolved
         )
-        ctx['open_ticket_list'] = self.get_queryset().exclude(status=status)
-        ctx['resolved_ticket_list'] = self.get_queryset().filter(status=status)
         return ctx
 
 

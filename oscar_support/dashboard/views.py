@@ -1,22 +1,15 @@
-from django.conf import settings
 from django.views import generic
 from django.db.models import get_model, Q
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 from . import forms
-from .. import defaults
+from .. import utils
 
 Note = get_model('oscar_support', 'Note')
 Ticket = get_model('oscar_support', 'Ticket')
 Message = get_model('oscar_support', 'Message')
 TicketStatus = get_model('oscar_support', 'TicketStatus')
-
-SUPPORT_INITIAL_STATUS = getattr(
-    settings,
-    "SUPPORT_INITIAL_STATUS",
-    defaults.SUPPORT_INITIAL_STATUS
-)
 
 
 class TicketListMixin(object):
@@ -65,12 +58,8 @@ class TicketCreateView(generic.CreateView):
     form_class = forms.TicketCreateForm
 
     def get_default_status(self):
-        if self.default_status:
-            return self.default_status
-
-        self.default_status, __ = TicketStatus.objects.get_or_create(
-            name=SUPPORT_INITIAL_STATUS
-        )
+        if not self.default_status:
+            self.default_status = utils.TicketStatusGenerator.get_initial_status()  # noqa
         return self.default_status
 
     def get_form_kwargs(self):
