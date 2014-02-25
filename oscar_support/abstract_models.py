@@ -18,8 +18,8 @@ class BaseSupportModel(models.Model):
 
 
 class AbstractTicketType(BaseSupportModel):
-    slug = AutoSlugField(_("Slug"), populate_from='name')
-    name = models.CharField(_("Name"), max_length=64, unique=True)
+    slug = AutoSlugField(_("Slug"), populate_from='name', unique=True)
+    name = models.CharField(_("Name"), max_length=64)
 
     def __unicode__(self):
         return self.name
@@ -31,8 +31,8 @@ class AbstractTicketType(BaseSupportModel):
 
 
 class AbstractTicketStatus(BaseSupportModel):
-    slug = AutoSlugField(_("Slug"), populate_from='name')
-    name = models.CharField(_("Name"), max_length=64, unique=True)
+    slug = AutoSlugField(_("Slug"), populate_from='name', unique=True)
+    name = models.CharField(_("Name"), max_length=64)
 
     def __unicode__(self):
         return self.name
