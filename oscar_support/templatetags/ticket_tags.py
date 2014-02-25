@@ -1,7 +1,7 @@
 from django import template
 from django.db.models import get_model
 
-from oscar_support import defaults
+from oscar_support import utils
 
 Message = get_model('oscar_support', 'Message')
 TicketStatus = get_model('oscar_support', 'TicketStatus')
@@ -26,4 +26,4 @@ def get_ticket_statuses():
 
 @register.assignment_tag
 def get_default_ticket_status():
-    return defaults.get_ticket_initial_status()
+    return utils.TicketStatusGenerator.get_initial_status()

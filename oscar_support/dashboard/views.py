@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 from . import forms
-from .. import defaults
+from .. import utils
 
 Note = get_model('oscar_support', 'Note')
 Ticket = get_model('oscar_support', 'Ticket')
@@ -59,7 +59,7 @@ class TicketCreateView(generic.CreateView):
 
     def get_default_status(self):
         if not self.default_status:
-            self.default_status = defaults.get_ticket_initial_status()
+            self.default_status = utils.TicketStatusGenerator.get_initial_status()  # noqa
         return self.default_status
 
     def get_form_kwargs(self):
